@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#222b55">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="AIKO">
+  <meta name="description" content="AIKO, ta complice virtuelle toute douce.">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="icons/aiko-192.png">
+  <link rel="icon" href="icons/aiko-192.png">
+  <link rel="stylesheet" href="styles.css">
+  <title>AIKO ✦</title>
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <div class="brand">
+        <img class="brand-icon" src="icons/aiko-192.png" alt="Portrait d’Aiko">
+        <div><div class="brand-name">AIKO</div><div class="brand-subtitle">ta complice virtuelle</div></div>
+      </div>
+      <button id="new-chat" class="icon-button" aria-label="Nouvelle conversation" title="Nouvelle conversation">＋</button>
+    </header>
+
+    <section class="welcome-card">
+      <div class="petals">✧　✦　✧</div>
+      <h1>Bienvenue dans le monde d’Aiko</h1>
+      <p>Un endroit tout doux pour poser tes questions, apprendre et imaginer.</p>
+      <span class="online-dot"></span><span class="status">Prête à discuter</span>
+    </section>
+
+    <section id="chat" class="chat" aria-live="polite" aria-label="Conversation avec Aiko">
+      <article class="message assistant">
+        <img class="avatar" src="icons/aiko-192.png" alt="Aiko">
+        <div class="bubble">Coucou ! Moi, c’est Aiko. Que veux-tu faire aujourd’hui ? 💗</div>
+      </article>
+    </section>
+
+    <form id="composer" class="composer">
+      <label class="sr-only" for="prompt">Écris ton message à Aiko</label>
+      <input id="prompt" name="prompt" type="text" placeholder="Écris à Aiko…" autocomplete="off" maxlength="2000">
+      <button id="send" type="submit" aria-label="Envoyer">➤</button>
+    </form>
+    <p class="footnote">Prototype AIKO · Les réponses sont actuellement en mode démonstration.</p>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>
