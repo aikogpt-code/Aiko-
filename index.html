@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#292448">
-  <meta name="description" content="AIKO, ton assistante IA kawaii. Discute, imagine et apprends avec elle.">
+  <meta name="description" content="AIKO Gaming, ton coach IA pour tous les jeux, toutes les plateformes et tous les niveaux.">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="AIKO">
@@ -12,14 +12,14 @@
   <link rel="apple-touch-icon" href="./aiko-192.png">
   <link rel="icon" type="image/png" href="./aiko-192.png">
   <link rel="stylesheet" href="./styles.css">
-  <title>AIKO ✦ Ton amie IA</title>
+  <title>AIKO Gaming ✦ Ton copilote gamer</title>
 </head>
 <body>
   <div id="auth-screen" class="auth-screen">
     <div class="auth-card">
-      <div class="auth-brand"><img src="./aiko-192.png" alt="AIKO"><div><strong>AIKO</strong><span>un petit monde rien qu'à toi</span></div></div>
+      <div class="auth-brand"><img src="./aiko-192.png" alt="AIKO"><div><strong>AIKO</strong><span>ton copilote gaming</span></div></div>
       <div class="auth-illustration">✦ ♡ ✧</div>
-      <h1 id="auth-title">Bienvenue, senpai !</h1>
+      <h1 id="auth-title">Prêt à lancer la partie ?</h1>
       <p id="auth-description">Entre ton pseudo et ton code secret pour retrouver ton espace.</p>
       <form id="auth-form" class="auth-form">
         <label for="auth-name">Ton pseudo</label>
@@ -38,9 +38,9 @@
 
   <div id="app" class="app hidden">
     <aside id="sidebar" class="sidebar">
-      <div class="side-brand"><img src="./aiko-192.png" alt=""><div><b>AIKO</b><small>ta complice virtuelle</small></div></div>
+      <div class="side-brand"><img src="./aiko-192.png" alt=""><div><b>AIKO</b><small>GAMING AI COMPANION</small></div></div>
       <button id="new-chat" class="new-chat-button"><span>＋</span> Nouvelle discussion</button>
-      <div class="side-section-title">TES DISCUSSIONS</div>
+      <div class="side-section-title">TON HISTORIQUE</div>
       <nav id="conversation-list" class="conversation-list" aria-label="Historique des discussions"></nav>
       <div class="sidebar-bottom">
         <button id="create-persona-open" class="side-action"><span>✧</span> Créer une personnalité</button>
@@ -51,11 +51,11 @@
     <main class="main-panel">
       <header class="topbar">
         <button id="menu-toggle" class="mobile-menu" aria-label="Ouvrir le menu">☰</button>
-        <div class="topbar-title"><span class="online-dot"></span><span id="topbar-persona">Aiko · Douce</span></div>
+        <div class="topbar-title"><span class="online-dot"></span><span id="topbar-persona">AIKO Gaming · Coach</span></div>
         <div class="topbar-actions">
           <label class="persona-label" for="persona-select">PERSONNALITÉ</label>
           <select id="persona-select" aria-label="Choisir une personnalité">
-            <option value="douce">🌸 Douce</option><option value="tsundere">🔥 Tsundere</option><option value="enjouee">🎉 Enjouée</option><option value="sage">🌙 Sage</option><option value="directe">⚡ Directe</option><option value="creative">🎨 Créative</option>
+            <option value="coach" selected>🎮 Coach gamer</option><option value="douce">🌸 Douce</option><option value="tsundere">🔥 Tsundere</option><option value="enjouee">🎉 Enjouée</option><option value="sage">🌙 Sage</option><option value="directe">⚡ Directe</option><option value="creative">🎨 Créative</option>
           </select>
           <button id="settings-open" class="settings-button" title="Paramètres" aria-label="Paramètres">⚙</button>
         </div>
@@ -63,16 +63,17 @@
 
       <section class="chat-heading">
         <div class="heading-orbit">✦</div>
-        <h1 id="chat-title">Un petit coucou ?</h1>
-        <p id="chat-subtitle">Je suis là. On parle de quoi aujourd'hui ?</p>
+        <h1 id="chat-title">Bienvenue dans la game room</h1>
+        <p id="chat-subtitle">Stratégie, builds, boss, réglages ou simple discussion entre gamers.</p>
       </section>
+      <section class="gaming-toolbar" aria-label="Ton profil de jeu"><div class="game-field"><label for="game-platform">PLATEFORME</label><select id="game-platform"><option>PC</option><option>PlayStation</option><option>Xbox</option><option>Nintendo Switch</option><option>Mobile</option><option>Cloud Gaming</option><option>Autre</option></select></div><div class="game-field game-name-field"><label for="game-name">JEU DU MOMENT</label><input id="game-name" maxlength="60" placeholder="Ex. Fortnite, Minecraft, Elden Ring…"></div><span class="game-status">✦ Tous les jeux, tous les niveaux</span></section>
       <section id="chat-messages" class="chat-messages" aria-live="polite" aria-label="Messages"></section>
       <div id="typing-indicator" class="typing-indicator hidden"><img src="./aiko-192.png" alt=""><span>Aiko réfléchit</span><i></i><i></i><i></i></div>
       <form id="composer" class="composer">
-        <textarea id="prompt" rows="1" maxlength="3000" placeholder="Écris à Aiko ou demande : Dessine-moi…" aria-label="Ton message"></textarea>
+        <textarea id="prompt" rows="1" maxlength="3000" placeholder="Demande une strat, un build, une astuce… ou parle gaming" aria-label="Ton message"></textarea>
         <button id="send-button" type="submit" aria-label="Envoyer le message">➤</button>
       </form>
-      <p class="composer-note">Astuce : commence par « Dessine-moi… » pour créer une image. ♡</p>
+      <p class="composer-note">Ton copilote gaming · PC · PlayStation · Xbox · Switch · Mobile</p>
     </main>
   </div>
 
