@@ -44,3 +44,7 @@ body{background:#050505!important}
 .gaming-toolbar{background:#0d0d0d!important}
 .game-field select,.game-field input,.topbar select{background:#080808!important;color:#fff!important}
 @media(max-width:650px){.workspace-head{align-items:flex-start}.workspace-actions{width:100%}.workspace-actions input{flex:1}.mode-switch{padding:5px}}
+
+.image-studio-bar{margin:8px clamp(12px,5vw,64px);padding:10px 14px;display:flex;align-items:end;gap:12px;flex-wrap:wrap;border:1px solid color-mix(in srgb,var(--aiko-accent) 45%,#242424);border-radius:14px;background:#0b0b0b}
+.image-studio-bar .game-field{min-width:130px;flex:1}.image-studio-bar .game-field select{width:100%}.image-studio-bar .game-status{white-space:normal;align-self:center}
+@media(max-width:650px){.image-studio-bar{margin:7px 10px;padding:9px;gap:8px}.image-studio-bar .game-field{min-width:120px}.image-studio-bar .game-status{width:100%}}
