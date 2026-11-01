@@ -93,7 +93,7 @@ function addMessage(content, role, createdAt = new Date().toISOString()) {
   if (role === "assistant") {
     const avatar = document.createElement("img");
     avatar.className = "message-avatar";
-    avatar.src = "./aiko-192.png";
+    avatar.src = "./aiko-avatar.svg";
     avatar.alt = "Aiko";
     row.appendChild(avatar);
   }
@@ -131,7 +131,7 @@ function showWelcome() {
   welcome.className = "message-row assistant";
   const avatar = document.createElement("img");
   avatar.className = "message-avatar";
-  avatar.src = "./aiko-192.png";
+  avatar.src = "./aiko-avatar.svg";
   avatar.alt = "Aiko";
   const bubble = document.createElement("div");
   bubble.className = "message-bubble";
