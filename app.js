@@ -288,7 +288,7 @@ async function createConversation(firstMessage = "") {
 }
 
 function isImageRequest(message) {
-  return /^(?:dessine(?:-moi)?|g[eé]n[eè]re(?:-moi)?(?:\\s+une\\s+image)?|cr[eé]e(?:-moi)?(?:\\s+une\\s+image)?|fais(?:-moi)?(?:\\s+une\\s+image)?|fabrique(?:-moi)?(?:\\s+une\\s+image)?|image\\s*:)/i.test(message.trim());
+  return /^(?:dessine(?:-moi)?|g[eé]n[eè]re(?:-moi)?|cr[eé]e(?:-moi)?|fais(?:-moi)?|fabrique(?:-moi)?|image *:)/i.test(message.trim());
 }
 
 async function sendMessage(rawMessage) {
