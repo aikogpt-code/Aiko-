@@ -84,3 +84,7 @@ body{background:#050505!important}
   #composer{margin:4px 10px max(10px,env(safe-area-inset-bottom))!important}
   .chat-messages{min-height:0}
 }
+
+
+/* Masquer le titre de chaque discussion dans l'en-tête du chat. */
+.chat-heading{display:none!important}
