@@ -310,10 +310,11 @@ async function sendMessage(rawMessage) {
       currentConversation.persona_key = currentPersona;
     }
     const imageRequest = isImageRequest(message);
+    const imageOptions = { style: $("#image-style").value, format: $("#image-format").value };
     const gameContext = { platform: $("#game-platform").value, game: $("#game-name").value.trim() };
     const { data, error } = await supabase.functions.invoke(imageRequest ? "aiko-image" : "aiko-chat", {
       body: imageRequest
-        ? { conversation_id: currentConversation.id, prompt: message }
+        ? { conversation_id: currentConversation.id, prompt: message, image_options: imageOptions }
         : { conversation_id: currentConversation.id, message, persona_key: currentPersona, game_context: gameContext, assistant_mode: assistantMode }
     });
     if (error) {
@@ -554,6 +555,10 @@ function saveGameSetup() {
 }
 $("#game-platform").addEventListener("change", saveGameSetup);
 $("#game-name").addEventListener("change", saveGameSetup);
+for (const id of ["image-style","image-format"]) {
+  try { const opts=JSON.parse(localStorage.getItem("aiko-image-setup")||"{}"); if(opts[id==="image-style"?"style":"format"]) $("#"+id).value=opts[id==="image-style"?"style":"format"]; } catch {}
+  $("#"+id).addEventListener("change",()=>{try{localStorage.setItem("aiko-image-setup",JSON.stringify({style:$("#image-style").value,format:$("#image-format").value}));}catch{}});
+}
 
 
 function setAssistantMode(mode) {
