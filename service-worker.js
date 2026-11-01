@@ -1,12 +1,11 @@
-const CACHE_NAME = "aiko-shell-v15";
+const CACHE_NAME = "aiko-shell-v16";
 const APP_FILES = [
   "./",
   "./index.html",
   "./styles.css",
   "./app.js",
   "./manifest.webmanifest",
-  "./aiko-192.png",
-  "./aiko-512.png"
+  "./aiko-avatar.svg"
 ];
 
 self.addEventListener("install", (event) => {
