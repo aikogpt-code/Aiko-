@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+<title id="title">AIKO — assistante IA</title><desc id="desc">Avatar cartoon d'une fille en sweat bleu, aux cheveux bruns qui cachent ses yeux.</desc>
+<defs>
+ <linearGradient id="bg" x2="1" y2="1"><stop stop-color="#080d1d"/><stop offset="1" stop-color="#111b3b"/></linearGradient>
+ <linearGradient id="hood" x2="0.8" y2="1"><stop stop-color="#164cff"/><stop offset="1" stop-color="#071b65"/></linearGradient>
+ <linearGradient id="hair" x2="0.9" y2="1"><stop stop-color="#70452f"/><stop offset="1" stop-color="#281a18"/></linearGradient>
+</defs>
+<rect width="512" height="512" rx="112" fill="url(#bg)"/>
+<circle cx="256" cy="226" r="204" fill="none" stroke="#244fff" stroke-width="5"/>
+<path d="M72 512c9-105 66-155 137-170h94c71 15 128 65 137 170z" fill="url(#hood)"/>
+<path d="M150 347c-37 22-60 67-66 165h344c-6-98-29-143-66-165l-51-22H201z" fill="#09256f" stroke="#2861ff" stroke-width="7"/>
+<path d="M165 174c0-91 39-136 91-136s91 45 91 136v92c0 79-42 126-91 126s-91-47-91-126z" fill="#f0c6ad"/>
+<path d="M145 204c-5-104 34-166 112-166 82 0 122 63 112 171l-9 60c-23-20-34-49-44-84-31 25-91 42-157 39-2 30-8 57-22 78z" fill="url(#hair)"/>
+<path d="M151 188c38-20 60-54 77-88 26 33 70 51 127 54 17 25 22 54 16 91-30-12-55-35-72-65-44 37-95 55-154 54-7-15-5-31 6-46z" fill="#3a241e"/>
+<path d="M171 188c-17 48-23 100-12 146-35-23-54-66-46-114 5-30 24-59 48-77zM338 171c28 22 45 51 48 87 4 39-11 74-39 97 10-53 3-104-9-184z" fill="url(#hair)"/>
+<path d="M201 223c-8 25-17 42-32 56M236 218c-6 27-14 44-27 61M276 216c-5 27-12 44-25 62M315 207c-1 28-7 47-19 67" fill="none" stroke="#8a5a40" stroke-width="8" stroke-linecap="round" opacity=".45"/>
+<path d="M204 393l52 43 52-43 31 119H173z" fill="#06164b"/>
+<path d="M185 347c21 20 46 30 71 30s50-10 71-30" fill="none" stroke="#0a1744" stroke-width="13" stroke-linecap="round"/>
+<path d="M128 512l31-112 97 67 97-67 31 112" fill="none" stroke="#2861ff" stroke-width="7"/>
+<text x="256" y="463" fill="#fff" font-family="Arial,Helvetica,sans-serif" font-size="48" font-weight="800" letter-spacing="5" text-anchor="middle">AIKO</text>
+<text x="256" y="491" fill="#cbd5ff" font-family="Arial,Helvetica,sans-serif" font-size="17" letter-spacing="5" text-anchor="middle">i.a</text>
+</svg>
