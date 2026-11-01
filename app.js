@@ -97,11 +97,13 @@ function addMessage(content, role, createdAt = new Date().toISOString()) {
   }
   const bubble = document.createElement("div");
   bubble.className = "message-bubble";
-  const imageMatch = typeof content === "string" ? content.match(/^\\[\\[AIKO_IMAGE\\]\\](https:\\/\\/[^\\s]+)$/) : null;
-  if (imageMatch) {
+  const imageUrl = typeof content === "string" && content.startsWith("[[AIKO_IMAGE]]")
+    ? content.slice(14)
+    : null;
+  if (imageUrl && imageUrl.startsWith("https://media.pollinations.ai/")) {
     const image = document.createElement("img");
     image.className = "generated-image";
-    image.src = imageMatch[1];
+    image.src = imageUrl;
     image.alt = "Image générée par AIKO";
     image.loading = "lazy";
     image.referrerPolicy = "no-referrer";
