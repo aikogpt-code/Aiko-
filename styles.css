@@ -19,3 +19,28 @@ html,body{background:#0b1020;color:var(--ink)}body{background:radial-gradient(el
 .chat-heading h1{color:#f4f5ff}.chat-heading p{color:#9aa5c4}.heading-orbit{background:#25264b;color:#7ce9ed}.message-bubble{background:#1a2038;border-color:#343b5a;color:#e9edff;box-shadow:none}.message-row.user .message-bubble{background:linear-gradient(135deg,#6550c9,#247f9c);border-color:#6550c9;color:white}.message-avatar{background:#171d34;border-color:#343b5a}.composer{box-shadow:0 8px 28px #0005}.composer textarea{color:#edf1ff}.composer textarea::placeholder{color:#75809e}
 .gaming-toolbar{margin:2px clamp(12px,5vw,64px) 0;padding:12px 14px;display:flex;align-items:end;gap:13px;border:1px solid #343b5a;border-radius:16px;background:linear-gradient(100deg,#171d35,#171b30)}.game-field{display:flex;flex-direction:column;gap:5px;min-width:130px}.game-field label{font-size:9px;letter-spacing:1.4px;font-weight:900;color:#7f8cac}.game-field select,.game-field input{height:35px;border:1px solid #394264;border-radius:9px;background:#10162a;color:#edf1ff;padding:0 10px;font:700 12px Nunito,sans-serif;min-width:0}.game-name-field{flex:1}.game-status{font-size:10px;color:#74dce2;white-space:nowrap;padding:0 0 9px}.modal-card h2{color:#f4f5ff}.settings-row{border-color:#303752}.settings-row small{color:#9aa5c4}.toast{background:#e9eaff;color:#171a2d}
 @media(max-width:760px){.gaming-toolbar{margin:0 10px;padding:9px;gap:8px;flex-wrap:wrap}.game-field{min-width:110px;flex:1}.game-name-field{min-width:145px}.game-status{width:100%;padding:0 2px 1px}.chat-heading{padding:13px 10px 7px}.chat-heading h1{font-size:17px}}
+
+/* Black gaming theme with adjustable neon accent */
+:root{--aiko-accent:#a855f7;--aiko-glow:12px;color-scheme:dark}
+html,body,#app{background:#050505!important;color:#f5f5f5}
+body{background:#050505!important}
+.sidebar,.main-panel,.auth-screen,.auth-card,.modal-card{background:#080808!important;color:#f4f4f4!important}
+.sidebar,.topbar,.auth-card,.modal-card,.message-bubble,.composer,.gaming-toolbar,.settings-row,.coding-workspace{border-color:color-mix(in srgb,var(--aiko-accent) 55%,#242424)!important}
+.primary-button,.new-chat-button,.composer button{background:var(--aiko-accent)!important}
+.message-bubble,.composer,.gaming-toolbar,.coding-workspace{background:#101010!important}
+.message-row.user .message-bubble{background:color-mix(in srgb,var(--aiko-accent) 40%,#111)!important}
+.settings-button,.mode-button,.workspace-actions button{border:1px solid var(--aiko-accent);color:#fff;background:#101010;border-radius:10px;padding:8px 12px}
+.mode-switch{display:flex;gap:8px;justify-content:center;padding:6px 14px}
+.mode-button.active{background:var(--aiko-accent);box-shadow:0 0 var(--aiko-glow) var(--aiko-accent)}
+.coding-workspace{margin:8px clamp(12px,5vw,64px);padding:12px;border:1px solid;border-radius:14px;min-height:260px}
+.workspace-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.workspace-head small{display:block;color:#999;font-size:11px;margin-top:4px}
+.workspace-actions{display:flex;gap:6px;flex-wrap:wrap}
+.workspace-actions input{width:110px;background:#050505;color:white;border:1px solid #444;border-radius:8px;padding:7px}
+#workspace-editor{display:block;width:100%;min-height:220px;margin-top:12px;resize:vertical;background:#050505;color:#d9f99d;border:1px solid #292929;border-radius:10px;padding:12px;font:13px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;tab-size:2}
+#workspace-status{color:#999;font-size:11px;margin:8px 2px 0}
+#accent-color{width:42px;height:34px;border:0;background:transparent}
+#accent-glow{width:120px;accent-color:var(--aiko-accent)}
+.gaming-toolbar{background:#0d0d0d!important}
+.game-field select,.game-field input,.topbar select{background:#080808!important;color:#fff!important}
+@media(max-width:650px){.workspace-head{align-items:flex-start}.workspace-actions{width:100%}.workspace-actions input{flex:1}.mode-switch{padding:5px}}
