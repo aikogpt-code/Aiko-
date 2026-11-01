@@ -67,8 +67,10 @@
         <p id="chat-subtitle">Stratégie, builds, boss, réglages ou simple discussion entre gamers.</p>
       </section>
       <section class="gaming-toolbar" aria-label="Ton profil de jeu"><div class="game-field"><label for="game-platform">PLATEFORME</label><select id="game-platform"><option>PC</option><option>PlayStation</option><option>Xbox</option><option>Nintendo Switch</option><option>Mobile</option><option>Cloud Gaming</option><option>Autre</option></select></div><div class="game-field game-name-field"><label for="game-name">JEU DU MOMENT</label><input id="game-name" maxlength="60" placeholder="Ex. Fortnite, Minecraft, Elden Ring…"></div><span class="game-status">✦ Tous les jeux, tous les niveaux</span></section>
+      <section id="coding-workspace" class="coding-workspace hidden"><div class="workspace-head"><div><b>⌨️ Atelier de code</b><small>Écris, modifie et garde tes fichiers sur cet appareil.</small></div><div class="workspace-actions"><input id="workspace-filename" value="main.py" aria-label="Nom du fichier"><button id="workspace-save" type="button">Enregistrer</button><button id="workspace-download" type="button">Exporter</button></div></div><textarea id="workspace-editor" spellcheck="false" autocapitalize="off" autocomplete="off" placeholder="// Ton code ici..."></textarea><p id="workspace-status">Les modifications restent dans ton espace de travail local. Exporte le fichier pour l’utiliser dans ton projet.</p></section>
       <section id="chat-messages" class="chat-messages" aria-live="polite" aria-label="Messages"></section>
       <div id="typing-indicator" class="typing-indicator hidden"><img src="./aiko-192.png" alt=""><span>Aiko réfléchit</span><i></i><i></i><i></i></div>
+      <div class="mode-switch"><button id="mode-chat" class="mode-button active" type="button">💬 Chat gamer</button><button id="mode-code" class="mode-button" type="button">⌨️ Mode codage</button></div>
       <form id="composer" class="composer">
         <textarea id="prompt" rows="1" maxlength="3000" placeholder="Demande une strat, un build, une astuce… ou parle gaming" aria-label="Ton message"></textarea>
         <button id="send-button" type="submit" aria-label="Envoyer le message">➤</button>
@@ -98,6 +100,8 @@
       <button class="modal-close" data-close="settings-modal" aria-label="Fermer">×</button>
       <div class="modal-kicker">✧ TON ESPACE</div><h2 id="settings-title">Paramètres</h2>
       <div class="settings-row"><div><b>Compte</b><small id="settings-account"></small></div><button id="settings-signout" class="secondary-button">Déconnexion</button></div>
+      <div class="settings-row"><div><b>Couleur des contours</b><small>Choisis la couleur du néon et des bordures.</small></div><input id="accent-color" type="color" value="#a855f7" aria-label="Couleur des contours"></div>
+      <div class="settings-row"><div><b>Intensité du néon</b><small>Règle la luminosité des contours.</small></div><input id="accent-glow" type="range" min="0" max="30" value="12" aria-label="Intensité du néon"></div>
       <div class="settings-row"><div><b>Personnalités</b><small>Gère tes personnalités personnalisées depuis le menu latéral.</small></div><button id="settings-persona" class="secondary-button">Créer</button></div>
       <p class="settings-footnote">AIKO est une application en développement. Tes données sont associées à ton compte Supabase.</p>
     </div>
