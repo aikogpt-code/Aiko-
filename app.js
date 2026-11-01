@@ -231,9 +231,11 @@ function renderConversationList() {
     return;
   }
   conversations.forEach((conversation) => {
+    const item = document.createElement("div");
+    item.className = `conversation-item-wrap ${currentConversation?.id === conversation.id ? "active" : ""}`;
     const button = document.createElement("button");
     button.type = "button";
-    button.className = `conversation-item ${currentConversation?.id === conversation.id ? "active" : ""}`;
+    button.className = "conversation-item";
     const icon = document.createElement("span");
     icon.textContent = "✧";
     const title = document.createElement("span");
@@ -241,8 +243,45 @@ function renderConversationList() {
     title.textContent = conversation.title || "Nouvelle discussion";
     button.append(icon, title);
     button.addEventListener("click", () => openConversation(conversation));
-    list.appendChild(button);
+    const remove = document.createElement("button");
+    remove.type = "button";
+    remove.className = "delete-conversation";
+    remove.textContent = "🗑";
+    remove.title = "Supprimer cette discussion";
+    remove.setAttribute("aria-label", `Supprimer la discussion ${conversation.title || "sans titre"}`);
+    remove.addEventListener("click", (event) => {
+      event.stopPropagation();
+      deleteConversation(conversation);
+    });
+    item.append(button, remove);
+    list.appendChild(item);
   });
+}
+ 
+async function deleteConversation(conversation) {
+  const title = conversation.title || "Nouvelle discussion";
+  if (!window.confirm(`Supprimer définitivement « ${title} » et tous ses messages ?`)) return;
+  const { data, error } = await supabase.from("conversations")
+    .delete()
+    .eq("id", conversation.id)
+    .eq("user_id", currentUser.id)
+    .select("id");
+  if (error) {
+    console.error("AIKO delete conversation:", error);
+    toast("Impossible de supprimer cette discussion.");
+    return;
+  }
+  if (!data?.length) {
+    toast("Discussion introuvable ou déjà supprimée.");
+    return;
+  }
+  conversations = conversations.filter((item) => item.id !== conversation.id);
+  if (currentConversation?.id === conversation.id) {
+    currentConversation = null;
+    showWelcome();
+  }
+  renderConversationList();
+  toast("Discussion supprimée.");
 }
 
 async function openConversation(conversation) {
