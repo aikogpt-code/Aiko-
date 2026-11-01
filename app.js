@@ -35,6 +35,7 @@ let authMode = "login";
 let busy = false;
 let toastTimer;
 let assistantMode = "chat";
+let imageMode = false;
 
 function toast(message) {
   const node = $("#toast");
@@ -309,7 +310,7 @@ async function sendMessage(rawMessage) {
       if (updateError) throw updateError;
       currentConversation.persona_key = currentPersona;
     }
-    const imageRequest = isImageRequest(message);
+    const imageRequest = imageMode || isImageRequest(message);
     const imageOptions = { style: $("#image-style").value, format: $("#image-format").value };
     const gameContext = { platform: $("#game-platform").value, game: $("#game-name").value.trim() };
     const { data, error } = await supabase.functions.invoke(imageRequest ? "aiko-image" : "aiko-chat", {
@@ -588,6 +589,14 @@ function setAssistantMode(mode) {
     : "Atelier de code prêt.";
 }
 $("#mode-chat").addEventListener("click", () => setAssistantMode("chat"));
+$("#image-mode-toggle").addEventListener("click", () => {
+  imageMode = !imageMode;
+  $("#image-mode-toggle").classList.toggle("active", imageMode);
+  $("#image-mode-toggle").setAttribute("aria-pressed", String(imageMode));
+  $("#image-studio").classList.toggle("hidden", !imageMode);
+  promptInput.placeholder = imageMode ? "Décris l’image que tu veux créer…" : assistantMode === "code" ? "Décris le code ou le bug à résoudre…" : "Demande une strat, un build, une astuce…";
+  if (imageMode) toast("Mode image activé ✨");
+});
 $("#mode-code").addEventListener("click", () => setAssistantMode("code"));
 $("#workspace-open").addEventListener("click", () => {
   const filename = $("#workspace-filename").value.trim() || "code.txt";
