@@ -1,51 +1,108 @@
 <!doctype html>
 <html lang="fr">
-<link rel="apple-touch-icon" href="icons/aiko-192.png">
-<link rel="icon" type="image/png" href="icons/aiko-192.png"><head>
+<head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#222b55">
+  <meta name="theme-color" content="#292448">
+  <meta name="description" content="AIKO, ton assistante IA kawaii. Discute, imagine et apprends avec elle.">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="AIKO">
-  <meta name="description" content="AIKO, ta complice virtuelle toute douce.">
-  <link rel="manifest" href="manifest.webmanifest">
-  <link rel="apple-touch-icon" href="icons/aiko-192.png">
-  <link rel="icon" href="icons/aiko-192.png">
-  <link rel="stylesheet" href="styles.css">
-  <title>AIKO ✦</title>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="apple-touch-icon" href="./aiko-192.png">
+  <link rel="icon" type="image/png" href="./aiko-192.png">
+  <link rel="stylesheet" href="./styles.css">
+  <title>AIKO ✦ Ton amie IA</title>
 </head>
 <body>
-  <main class="app-shell">
-    <header class="topbar">
-      <div class="brand">
-        <img class="brand-icon" src="icons/aiko-192.png" alt="Portrait d’Aiko">
-        <div><div class="brand-name">AIKO</div><div class="brand-subtitle">ta complice virtuelle</div></div>
+  <div id="auth-screen" class="auth-screen">
+    <div class="auth-card">
+      <div class="auth-brand"><img src="./aiko-192.png" alt="AIKO"><div><strong>AIKO</strong><span>un petit monde rien qu'à toi</span></div></div>
+      <div class="auth-illustration">✦ ♡ ✧</div>
+      <h1 id="auth-title">Bienvenue, senpai !</h1>
+      <p id="auth-description">Connecte-toi pour retrouver tes conversations et personnalités.</p>
+      <form id="auth-form" class="auth-form">
+        <label for="auth-email">Adresse e-mail</label>
+        <input id="auth-email" type="email" autocomplete="email" placeholder="toi@exemple.com" required>
+        <label for="auth-password">Mot de passe</label>
+        <input id="auth-password" type="password" autocomplete="current-password" minlength="6" placeholder="6 caractères minimum" required>
+        <label id="auth-name-label" for="auth-name" class="hidden">Ton pseudo</label>
+        <input id="auth-name" class="hidden" type="text" autocomplete="nickname" maxlength="40" placeholder="Comment Aiko doit t'appeler ?">
+        <button id="auth-submit" class="primary-button" type="submit">Se connecter</button>
+      </form>
+      <p class="auth-switch"><span id="auth-switch-copy">Pas encore de compte ?</span> <button id="auth-switch" type="button">Créer un compte</button></p>
+      <p id="auth-message" class="auth-message" role="status"></p>
+      <p class="auth-privacy">Tes conversations restent privées dans ton compte.</p>
+    </div>
+  </div>
+
+  <div id="app" class="app hidden">
+    <aside id="sidebar" class="sidebar">
+      <div class="side-brand"><img src="./aiko-192.png" alt=""><div><b>AIKO</b><small>ta complice virtuelle</small></div></div>
+      <button id="new-chat" class="new-chat-button"><span>＋</span> Nouvelle discussion</button>
+      <div class="side-section-title">TES DISCUSSIONS</div>
+      <nav id="conversation-list" class="conversation-list" aria-label="Historique des discussions"></nav>
+      <div class="sidebar-bottom">
+        <button id="create-persona-open" class="side-action"><span>✧</span> Créer une personnalité</button>
+        <div class="user-card"><div class="user-avatar" id="user-avatar">♡</div><div class="user-details"><strong id="user-name">Mon compte</strong><small id="user-email"></small></div><button id="sign-out" class="sign-out" title="Se déconnecter" aria-label="Se déconnecter">↪</button></div>
       </div>
-      <button id="new-chat" class="icon-button" aria-label="Nouvelle conversation" title="Nouvelle conversation">＋</button>
-    </header>
+    </aside>
 
-    <section class="welcome-card">
-      <div class="petals">✧　✦　✧</div>
-      <h1>Bienvenue dans le monde d’Aiko</h1>
-      <p>Un endroit tout doux pour poser tes questions, apprendre et imaginer.</p>
-      <span class="online-dot"></span><span class="status">Prête à discuter</span>
-    </section>
+    <main class="main-panel">
+      <header class="topbar">
+        <button id="menu-toggle" class="mobile-menu" aria-label="Ouvrir le menu">☰</button>
+        <div class="topbar-title"><span class="online-dot"></span><span id="topbar-persona">Aiko · Douce</span></div>
+        <div class="topbar-actions">
+          <label class="persona-label" for="persona-select">PERSONNALITÉ</label>
+          <select id="persona-select" aria-label="Choisir une personnalité">
+            <option value="douce">🌸 Douce</option><option value="tsundere">🔥 Tsundere</option><option value="enjouee">🎉 Enjouée</option><option value="sage">🌙 Sage</option><option value="directe">⚡ Directe</option><option value="creative">🎨 Créative</option>
+          </select>
+          <button id="settings-open" class="settings-button" title="Paramètres" aria-label="Paramètres">⚙</button>
+        </div>
+      </header>
 
-    <section id="chat" class="chat" aria-live="polite" aria-label="Conversation avec Aiko">
-      <article class="message assistant">
-        <img class="avatar" src="icons/aiko-192.png" alt="Aiko">
-        <div class="bubble">Coucou ! Moi, c’est Aiko. Que veux-tu faire aujourd’hui ? 💗</div>
-      </article>
-    </section>
+      <section class="chat-heading">
+        <div class="heading-orbit">✦</div>
+        <h1 id="chat-title">Un petit coucou ?</h1>
+        <p id="chat-subtitle">Je suis là. On parle de quoi aujourd'hui ?</p>
+      </section>
+      <section id="chat-messages" class="chat-messages" aria-live="polite" aria-label="Messages"></section>
+      <div id="typing-indicator" class="typing-indicator hidden"><img src="./aiko-192.png" alt=""><span>Aiko réfléchit</span><i></i><i></i><i></i></div>
+      <form id="composer" class="composer">
+        <textarea id="prompt" rows="1" maxlength="3000" placeholder="Écris ton message à Aiko…" aria-label="Ton message"></textarea>
+        <button id="send-button" type="submit" aria-label="Envoyer le message">➤</button>
+      </form>
+      <p class="composer-note">AIKO peut se tromper. Vérifie les informations importantes. ♡</p>
+    </main>
+  </div>
 
-    <form id="composer" class="composer">
-      <label class="sr-only" for="prompt">Écris ton message à Aiko</label>
-      <input id="prompt" name="prompt" type="text" placeholder="Écris à Aiko…" autocomplete="off" maxlength="2000">
-      <button id="send" type="submit" aria-label="Envoyer">➤</button>
-    </form>
-    <p class="footnote">Prototype AIKO · Les réponses sont actuellement en mode démonstration.</p>
-  </main>
-  <script src="app.js"></script>
+  <div id="persona-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="persona-modal-title">
+    <div class="modal-card">
+      <button class="modal-close" data-close="persona-modal" aria-label="Fermer">×</button>
+      <div class="modal-kicker">✧ PERSONNALITÉ SUR MESURE</div>
+      <h2 id="persona-modal-title">Imagine ta propre Aiko</h2>
+      <p>Décris son caractère et sa façon de te répondre.</p>
+      <form id="persona-form" class="stack-form">
+        <label for="persona-name">Nom</label><input id="persona-name" maxlength="40" required placeholder="Ex. Hikari">
+        <label for="persona-description">Petite description</label><input id="persona-description" maxlength="240" placeholder="Une amie calme et passionnée de science">
+        <label for="persona-prompt">Comportement et ton</label><textarea id="persona-prompt" maxlength="2000" rows="4" required placeholder="Tu es curieuse, bienveillante, drôle…"></textarea>
+        <button class="primary-button" type="submit">Créer ma personnalité</button>
+      </form>
+      <p id="persona-message" class="auth-message" role="status"></p>
+    </div>
+  </div>
+
+  <div id="settings-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+    <div class="modal-card">
+      <button class="modal-close" data-close="settings-modal" aria-label="Fermer">×</button>
+      <div class="modal-kicker">✧ TON ESPACE</div><h2 id="settings-title">Paramètres</h2>
+      <div class="settings-row"><div><b>Compte</b><small id="settings-account"></small></div><button id="settings-signout" class="secondary-button">Déconnexion</button></div>
+      <div class="settings-row"><div><b>Personnalités</b><small>Gère tes personnalités personnalisées depuis le menu latéral.</small></div><button id="settings-persona" class="secondary-button">Créer</button></div>
+      <p class="settings-footnote">AIKO est une application en développement. Tes données sont associées à ton compte Supabase.</p>
+    </div>
+  </div>
+
+  <div id="toast" class="toast" role="status"></div>
+  <script type="module" src="./app.js"></script>
 </body>
 </html>
