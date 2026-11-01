@@ -34,6 +34,7 @@ let customPersonas = [];
 let authMode = "login";
 let busy = false;
 let toastTimer;
+let assistantMode = "chat";
 
 function toast(message) {
   const node = $("#toast");
@@ -313,7 +314,7 @@ async function sendMessage(rawMessage) {
     const { data, error } = await supabase.functions.invoke(imageRequest ? "aiko-image" : "aiko-chat", {
       body: imageRequest
         ? { conversation_id: currentConversation.id, prompt: message }
-        : { conversation_id: currentConversation.id, message, persona_key: currentPersona, game_context: gameContext }
+        : { conversation_id: currentConversation.id, message, persona_key: currentPersona, game_context: gameContext, assistant_mode: assistantMode }
     });
     if (error) {
       let detail = data?.error;
@@ -543,6 +544,54 @@ function saveGameSetup() {
 }
 $("#game-platform").addEventListener("change", saveGameSetup);
 $("#game-name").addEventListener("change", saveGameSetup);
+
+
+function setAssistantMode(mode) {
+  assistantMode = mode;
+  $("#mode-chat").classList.toggle("active", mode === "chat");
+  $("#mode-code").classList.toggle("active", mode === "code");
+  $("#coding-workspace").classList.toggle("hidden", mode !== "code");
+  $("#chat-messages").classList.toggle("hidden", mode === "code");
+  promptInput.placeholder = mode === "code" ? "Décris le code ou le bug à résoudre…" : "Demande une strat, un build, une astuce…";
+  $("#workspace-status").textContent = mode === "code"
+    ? "Atelier local : édite ton fichier ici, puis enregistre ou exporte-le. L’accès direct à GitHub sera ajouté via une connexion sécurisée."
+    : "Atelier de code prêt.";
+}
+$("#mode-chat").addEventListener("click", () => setAssistantMode("chat"));
+$("#mode-code").addEventListener("click", () => setAssistantMode("code"));
+$("#workspace-save").addEventListener("click", () => {
+  const filename = $("#workspace-filename").value.trim() || "code.txt";
+  try {
+    localStorage.setItem("aiko-workspace:" + filename, $("#workspace-editor").value);
+    toast("Fichier enregistré sur cet appareil.");
+  } catch { toast("Impossible d’enregistrer ce fichier localement."); }
+});
+$("#workspace-download").addEventListener("click", () => {
+  const filename = ($("#workspace-filename").value.trim() || "code.txt").replace(/[^a-zA-Z0-9._-]/g, "_");
+  const blob = new Blob([$("#workspace-editor").value], { type: "text/plain;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url; link.download = filename; link.click();
+  URL.revokeObjectURL(url);
+});
+const accentPicker = $("#accent-color");
+const glowPicker = $("#accent-glow");
+function applyAccent() {
+  document.documentElement.style.setProperty("--aiko-accent", accentPicker.value);
+  document.documentElement.style.setProperty("--aiko-glow", glowPicker.value + "px");
+  try {
+    localStorage.setItem("aiko-theme", JSON.stringify({ color: accentPicker.value, glow: glowPicker.value }));
+  } catch { /* optional preference */ }
+}
+try {
+  const savedTheme = JSON.parse(localStorage.getItem("aiko-theme") || "{}");
+  if (savedTheme.color) accentPicker.value = savedTheme.color;
+  if (savedTheme.glow) glowPicker.value = savedTheme.glow;
+} catch { /* optional preference */ }
+accentPicker.addEventListener("input", applyAccent);
+glowPicker.addEventListener("input", applyAccent);
+applyAccent();
+
 
 supabase.auth.onAuthStateChange((event, session) => {
   if (event === "SIGNED_OUT" && currentUser) {
