@@ -18,6 +18,7 @@ const typingIndicator = $("#typing-indicator");
 const personaSelect = $("#persona-select");
 
 const builtInPersonas = [
+  { key: "coach", name: "Coach gamer", emoji: "🎮" },
   { key: "douce", name: "Douce", emoji: "🌸" },
   { key: "tsundere", name: "Tsundere", emoji: "🔥" },
   { key: "enjouee", name: "Enjouée", emoji: "🎉" },
@@ -133,7 +134,7 @@ function showWelcome() {
   avatar.alt = "Aiko";
   const bubble = document.createElement("div");
   bubble.className = "message-bubble";
-  bubble.textContent = "Coucou ! 💗 Je suis heureuse de te retrouver. Qu'est-ce qu'on fait aujourd'hui ?";
+  bubble.textContent = "Yo gamer ! 🎮 Moi, c’est AIKO, ton copilote gaming. Je peux t’aider à progresser, trouver un build, battre un boss, optimiser tes réglages ou découvrir un nouveau jeu. On lance quelle partie ?";
   welcome.append(avatar, bubble);
   chatMessages.appendChild(welcome);
 
@@ -173,7 +174,7 @@ function updatePersonaHeading() {
 }
 
 function renderPersonaOptions() {
-  const selected = personaSelect.value || "douce";
+  const selected = personaSelect.value || "coach";
   personaSelect.replaceChildren();
   builtInPersonas.forEach((persona) => {
     const option = document.createElement("option");
@@ -193,7 +194,7 @@ function renderPersonaOptions() {
     personaSelect.appendChild(group);
   }
   const valid = [...personaSelect.options].some((option) => option.value === selected);
-  personaSelect.value = valid ? selected : "douce";
+  personaSelect.value = valid ? selected : "coach";
   updatePersonaHeading();
 }
 
@@ -245,7 +246,7 @@ function renderConversationList() {
 
 async function openConversation(conversation) {
   currentConversation = conversation;
-  personaSelect.value = conversation.persona_key || "douce";
+  personaSelect.value = conversation.persona_key || "coach";
   updatePersonaHeading();
   renderConversationList();
   $("#chat-title").textContent = conversation.title || "Discussion";
@@ -272,7 +273,7 @@ async function openConversation(conversation) {
 }
 
 async function createConversation(firstMessage = "") {
-  const personaKey = personaSelect.value || "douce";
+  const personaKey = personaSelect.value || "coach";
   const title = escapeTitle(firstMessage) || "Nouvelle discussion";
   const { data, error } = await supabase.from("conversations")
     .insert({ user_id: currentUser.id, title, persona_key: personaKey })
@@ -300,7 +301,7 @@ async function sendMessage(rawMessage) {
   setBusy(true);
   try {
     if (!currentConversation) await createConversation(message);
-    const currentPersona = personaSelect.value || "douce";
+    const currentPersona = personaSelect.value || "coach";
     if (currentConversation.persona_key !== currentPersona) {
       const { error: updateError } = await supabase.from("conversations")
         .update({ persona_key: currentPersona }).eq("id", currentConversation.id).eq("user_id", currentUser.id);
@@ -308,10 +309,11 @@ async function sendMessage(rawMessage) {
       currentConversation.persona_key = currentPersona;
     }
     const imageRequest = isImageRequest(message);
+    const gameContext = { platform: $("#game-platform").value, game: $("#game-name").value.trim() };
     const { data, error } = await supabase.functions.invoke(imageRequest ? "aiko-image" : "aiko-chat", {
       body: imageRequest
         ? { conversation_id: currentConversation.id, prompt: message }
-        : { conversation_id: currentConversation.id, message, persona_key: currentPersona }
+        : { conversation_id: currentConversation.id, message, persona_key: currentPersona, game_context: gameContext }
     });
     if (error) {
       let detail = data?.error;
@@ -530,6 +532,17 @@ document.querySelectorAll(".modal").forEach((modal) => {
   });
 });
 $("#menu-toggle").addEventListener("click", () => $("#sidebar").classList.toggle("open"));
+
+try {
+  const savedGameSetup = JSON.parse(localStorage.getItem("aiko-gaming-setup") || "{}");
+  if (savedGameSetup.platform) $("#game-platform").value = savedGameSetup.platform;
+  if (savedGameSetup.game) $("#game-name").value = savedGameSetup.game;
+} catch { /* optional local preferences */ }
+function saveGameSetup() {
+  try { localStorage.setItem("aiko-gaming-setup", JSON.stringify({ platform: $("#game-platform").value, game: $("#game-name").value.trim() })); } catch { /* optional local preferences */ }
+}
+$("#game-platform").addEventListener("change", saveGameSetup);
+$("#game-name").addEventListener("change", saveGameSetup);
 
 supabase.auth.onAuthStateChange((event, session) => {
   if (event === "SIGNED_OUT" && currentUser) {
