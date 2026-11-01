@@ -334,6 +334,16 @@ async function sendMessage(rawMessage) {
     } else {
       if (!data?.reply) throw new Error("Aiko n'a pas reçu de réponse. Réessaie.");
       addMessage(data.reply, "assistant");
+      if (assistantMode === "code") {
+        const codeBlock = data.reply.match(/```([a-z0-9+#.-]*)\\s*\\n([\\s\\S]*?)```/i);
+        if (codeBlock) {
+          $("#workspace-editor").value = codeBlock[2].trimEnd();
+          const extensions = { javascript: "js", js: "js", typescript: "ts", ts: "ts", python: "py", py: "py", html: "html", css: "css", json: "json", sql: "sql", bash: "sh", sh: "sh" };
+          const extension = extensions[(codeBlock[1] || "").toLowerCase()];
+          if (extension) $("#workspace-filename").value = "main." + extension;
+          $("#workspace-status").textContent = "Le premier bloc de code de la réponse a été placé dans l’atelier. Vérifie-le avant de l’utiliser.";
+        }
+      }
     }
     const current = conversations.find((item) => item.id === currentConversation.id);
     if (current && current.title === "Nouvelle discussion") {
@@ -551,7 +561,7 @@ function setAssistantMode(mode) {
   $("#mode-chat").classList.toggle("active", mode === "chat");
   $("#mode-code").classList.toggle("active", mode === "code");
   $("#coding-workspace").classList.toggle("hidden", mode !== "code");
-  $("#chat-messages").classList.toggle("hidden", mode === "code");
+  $("#chat-messages").classList.remove("hidden");
   promptInput.placeholder = mode === "code" ? "Décris le code ou le bug à résoudre…" : "Demande une strat, un build, une astuce…";
   $("#workspace-status").textContent = mode === "code"
     ? "Atelier local : édite ton fichier ici, puis enregistre ou exporte-le. L’accès direct à GitHub sera ajouté via une connexion sécurisée."
@@ -559,6 +569,14 @@ function setAssistantMode(mode) {
 }
 $("#mode-chat").addEventListener("click", () => setAssistantMode("chat"));
 $("#mode-code").addEventListener("click", () => setAssistantMode("code"));
+$("#workspace-open").addEventListener("click", () => {
+  const filename = $("#workspace-filename").value.trim() || "code.txt";
+  const saved = localStorage.getItem("aiko-workspace:" + filename);
+  if (saved === null) { toast("Aucun fichier enregistré sous ce nom."); return; }
+  $("#workspace-editor").value = saved;
+  $("#workspace-status").textContent = "Fichier chargé depuis le stockage local de cet appareil.";
+  toast("Fichier ouvert.");
+});
 $("#workspace-save").addEventListener("click", () => {
   const filename = $("#workspace-filename").value.trim() || "code.txt";
   try {
