@@ -1,22 +1,40 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
-<title id="title">AIKO — assistante IA</title><desc id="desc">Avatar cartoon d'une fille en sweat bleu, aux cheveux bruns qui cachent ses yeux.</desc>
+<title id="title">AIKO — mascotte</title>
+<desc id="desc">Mascotte anime kawaii aux cheveux bruns, portant un hoodie bleu nuit, sur fond bleu électrique.</desc>
 <defs>
- <linearGradient id="bg" x2="1" y2="1"><stop stop-color="#080d1d"/><stop offset="1" stop-color="#111b3b"/></linearGradient>
- <linearGradient id="hood" x2="0.8" y2="1"><stop stop-color="#164cff"/><stop offset="1" stop-color="#071b65"/></linearGradient>
- <linearGradient id="hair" x2="0.9" y2="1"><stop stop-color="#70452f"/><stop offset="1" stop-color="#281a18"/></linearGradient>
+ <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#071126"/><stop offset=".55" stop-color="#10285a"/><stop offset="1" stop-color="#071126"/></linearGradient>
+ <radialGradient id="halo"><stop stop-color="#1d65ff" stop-opacity=".34"/><stop offset="1" stop-color="#1d65ff" stop-opacity="0"/></radialGradient>
+ <linearGradient id="hoodie" x1="0" y1="0" x2=".9" y2="1"><stop stop-color="#347cff"/><stop offset=".55" stop-color="#1645bd"/><stop offset="1" stop-color="#09245f"/></linearGradient>
+ <linearGradient id="hair" x1=".15" y1="0" x2=".85" y2="1"><stop stop-color="#9a6845"/><stop offset=".42" stop-color="#573522"/><stop offset="1" stop-color="#241a1a"/></linearGradient>
+ <linearGradient id="shine" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff"/><stop offset="1" stop-color="#9bdcff"/></linearGradient>
+ <filter id="glow"><feGaussianBlur stdDeviation="7" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
 </defs>
 <rect width="512" height="512" rx="112" fill="url(#bg)"/>
-<circle cx="256" cy="226" r="204" fill="none" stroke="#244fff" stroke-width="5"/>
-<path d="M72 512c9-105 66-155 137-170h94c71 15 128 65 137 170z" fill="url(#hood)"/>
-<path d="M150 347c-37 22-60 67-66 165h344c-6-98-29-143-66-165l-51-22H201z" fill="#09256f" stroke="#2861ff" stroke-width="7"/>
-<path d="M165 174c0-91 39-136 91-136s91 45 91 136v92c0 79-42 126-91 126s-91-47-91-126z" fill="#f0c6ad"/>
-<path d="M145 204c-5-104 34-166 112-166 82 0 122 63 112 171l-9 60c-23-20-34-49-44-84-31 25-91 42-157 39-2 30-8 57-22 78z" fill="url(#hair)"/>
-<path d="M151 188c38-20 60-54 77-88 26 33 70 51 127 54 17 25 22 54 16 91-30-12-55-35-72-65-44 37-95 55-154 54-7-15-5-31 6-46z" fill="#3a241e"/>
-<path d="M171 188c-17 48-23 100-12 146-35-23-54-66-46-114 5-30 24-59 48-77zM338 171c28 22 45 51 48 87 4 39-11 74-39 97 10-53 3-104-9-184z" fill="url(#hair)"/>
-<path d="M201 223c-8 25-17 42-32 56M236 218c-6 27-14 44-27 61M276 216c-5 27-12 44-25 62M315 207c-1 28-7 47-19 67" fill="none" stroke="#8a5a40" stroke-width="8" stroke-linecap="round" opacity=".45"/>
-<path d="M204 393l52 43 52-43 31 119H173z" fill="#06164b"/>
-<path d="M185 347c21 20 46 30 71 30s50-10 71-30" fill="none" stroke="#0a1744" stroke-width="13" stroke-linecap="round"/>
-<path d="M128 512l31-112 97 67 97-67 31 112" fill="none" stroke="#2861ff" stroke-width="7"/>
-<text x="256" y="463" fill="#fff" font-family="Arial,Helvetica,sans-serif" font-size="48" font-weight="800" letter-spacing="5" text-anchor="middle">AIKO</text>
-<text x="256" y="491" fill="#cbd5ff" font-family="Arial,Helvetica,sans-serif" font-size="17" letter-spacing="5" text-anchor="middle">i.a</text>
+<circle cx="256" cy="225" r="210" fill="url(#halo)"/>
+<circle cx="256" cy="220" r="183" fill="none" stroke="#3b82f6" stroke-opacity=".45" stroke-width="3"/>
+<g fill="#a8d9ff" opacity=".9"><path d="M82 144l5 13 13 5-13 5-5 13-5-13-13-5 13-5z"/><path d="M418 112l4 10 10 4-10 4-4 10-4-10-10-4 10-4z"/><circle cx="94" cy="285" r="3"/><circle cx="414" cy="282" r="4"/><circle cx="390" cy="174" r="2.5"/></g>
+<!-- shoulders and oversized hoodie -->
+<path d="M89 512c5-89 39-144 106-171l61-17 61 17c67 27 101 82 106 171z" fill="url(#hoodie)" stroke="#4c91ff" stroke-width="5"/>
+<path d="M151 352c-29 17-47 57-53 112 34-20 65-27 98-22l60 34 60-34c33-5 64 2 98 22-6-55-24-95-53-112l-58-24H209z" fill="#123b9a" stroke="#65a8ff" stroke-width="4"/>
+<!-- hood framing -->
+<path d="M134 263c-10-105 37-166 122-166s132 61 122 166l-16 80c-28 24-67 39-106 39s-78-15-106-39z" fill="#0c2b77" stroke="#347cff" stroke-width="7"/>
+<path d="M159 266c-2-88 31-139 97-139s99 51 97 139l-8 63c-25 30-55 45-89 45s-64-15-89-45z" fill="#f0c5a7"/>
+<!-- hair back -->
+<path d="M145 248c-22-113 16-190 111-190 99 0 135 78 111 190l-15 112c-17 33-37 51-58 59 21-52 16-104 2-145-34 29-83 42-143 35-7 39-19 77-43 106-7-52 1-109 35-167z" fill="url(#hair)"/>
+<!-- bangs sweeping over eyes -->
+<path d="M137 217c-4-97 36-159 119-159 77 0 119 57 119 148-25-7-48-24-65-50-21 39-65 68-132 77 2 37-5 73-23 105-22-34-28-77-18-121z" fill="url(#hair)"/>
+<path d="M163 184c26-20 43-48 54-79 22 31 57 50 104 58-27 38-72 64-132 74-12-15-20-33-26-53z" fill="#70452e"/>
+<path d="M188 164c19-19 30-39 36-59M232 151c19-16 30-34 37-55M279 163c19-14 31-29 39-47" fill="none" stroke="#c18b61" stroke-width="7" stroke-linecap="round" opacity=".48"/>
+<!-- side locks -->
+<path d="M146 208c-31 42-34 100-12 151 19-28 30-65 31-108zM365 193c30 40 33 94 13 143-18-27-28-60-31-100z" fill="#39251f"/>
+<!-- tiny visible smile and blush -->
+<ellipse cx="187" cy="306" rx="16" ry="8" fill="#d98f83" opacity=".35"/><ellipse cx="325" cy="306" rx="16" ry="8" fill="#d98f83" opacity=".35"/>
+<path d="M241 319q15 13 30 0" fill="none" stroke="#9e5c55" stroke-width="4" stroke-linecap="round"/>
+<!-- hoodie details -->
+<path d="M206 350l50 47 50-47" fill="none" stroke="#77baff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M223 376l-8 69M289 376l8 69" stroke="#a8d8ff" stroke-width="5" stroke-linecap="round"/>
+<circle cx="215" cy="451" r="5" fill="#d8f2ff"/><circle cx="297" cy="451" r="5" fill="#d8f2ff"/>
+<path d="M186 470h140" stroke="#65a8ff" stroke-width="2" opacity=".55"/>
+<g filter="url(#glow)"><text x="256" y="485" fill="#fff" font-family="Arial,Helvetica,sans-serif" font-size="37" font-weight="800" letter-spacing="5" text-anchor="middle">AIKO</text></g>
+<text x="256" y="505" fill="#b9dcff" font-family="Arial,Helvetica,sans-serif" font-size="13" letter-spacing="5" text-anchor="middle">i.a</text>
 </svg>
