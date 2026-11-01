@@ -73,3 +73,14 @@ body{background:#050505!important}
 #composer textarea::placeholder{color:#858585}
 .composer-note{flex-shrink:0;margin:5px 0 0}
 @media(max-width:760px){#composer{margin:4px 10px max(8px,env(safe-area-inset-bottom))}.composer-note{margin-top:5px}}
+
+/* Keep the composer as the final, bottom-anchored element of the chat panel. */
+.main-panel{display:flex;flex-direction:column;min-height:0}
+.chat-messages{flex:1 1 auto;min-height:0}
+#composer{position:relative!important;top:auto!important;flex:0 0 auto;margin:4px clamp(12px,5vw,64px) 12px!important}
+.composer-note{flex:0 0 auto;margin:5px 0 0!important}
+.mode-switch{flex:0 0 auto}
+@media(max-width:760px){
+  #composer{margin:4px 10px max(10px,env(safe-area-inset-bottom))!important}
+  .chat-messages{min-height:0}
+}
