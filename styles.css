@@ -62,3 +62,8 @@ body{background:#050505!important}
 #composer textarea{color:#f4f4f4;min-height:42px}
 #composer textarea::placeholder{color:#858585}
 .composer-note{flex-shrink:0;margin:2px 0 8px}
+
+/* Image generation is selected directly from the message composer. */
+.image-mode-toggle{width:39px;height:39px;flex:0 0 39px;border:1px solid #393939!important;border-radius:13px;background:#171717!important;color:#ddd!important;font-size:17px;box-shadow:none!important;cursor:pointer}
+.image-mode-toggle.active{background:var(--aiko-accent)!important;color:#fff!important;border-color:var(--aiko-accent)!important;box-shadow:0 0 16px color-mix(in srgb,var(--aiko-accent) 45%,transparent)!important}
+#composer{gap:8px}
