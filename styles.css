@@ -60,3 +60,16 @@ body{background:#050505!important}
 #composer textarea::placeholder{color:#858585}
 .composer-note{flex-shrink:0;margin:2px 0 8px}
 
+
+/* Conversation rows keep the trash action visible beside every title. */
+.conversation-item-wrap{display:flex;align-items:center;gap:4px;border-radius:11px;padding-right:5px}
+.conversation-item-wrap:hover,.conversation-item-wrap.active{background:#202542}
+.conversation-item-wrap .conversation-item{flex:1;min-width:0;width:0;padding-right:3px}
+.conversation-item-wrap .delete-conversation{opacity:.72;flex:0 0 30px;width:30px;height:30px;border:0;border-radius:8px;background:transparent;color:#ff8585;font-size:14px;cursor:pointer}
+.conversation-item-wrap .delete-conversation:hover{opacity:1;background:#4a202a}
+.conversation-item-wrap.active .conversation-item{background:transparent;color:#d9d2ff}
+#composer{position:relative;top:auto;z-index:5;flex-shrink:0;margin:4px clamp(12px,5vw,64px) 10px;background:#090909;border-color:#333;box-shadow:0 8px 24px #000b}
+#composer textarea{color:#f4f4f4;min-height:42px}
+#composer textarea::placeholder{color:#858585}
+.composer-note{flex-shrink:0;margin:5px 0 0}
+@media(max-width:760px){#composer{margin:4px 10px max(8px,env(safe-area-inset-bottom))}.composer-note{margin-top:5px}}
