@@ -56,3 +56,9 @@ body{background:#050505!important}
 .profile-chevron{font-size:14px;transition:transform .2s}
 .gaming-profile-toggle button[aria-expanded="true"] .profile-chevron{transform:rotate(180deg)}
 .gaming-toolbar{margin-top:6px}
+
+/* Keep the message box at the top so the draft stays visible while typing */
+#composer{position:sticky;top:0;z-index:5;flex-shrink:0;margin:8px clamp(12px,5vw,64px) 4px;background:#090909;border-color:#333;box-shadow:0 8px 24px #000b}
+#composer textarea{color:#f4f4f4;min-height:42px}
+#composer textarea::placeholder{color:#858585}
+.composer-note{flex-shrink:0;margin:2px 0 8px}
