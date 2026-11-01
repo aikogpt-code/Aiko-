@@ -335,7 +335,7 @@ async function sendMessage(rawMessage) {
       if (!data?.reply) throw new Error("Aiko n'a pas reçu de réponse. Réessaie.");
       addMessage(data.reply, "assistant");
       if (assistantMode === "code") {
-        const codeBlock = data.reply.match(/```([a-z0-9+#.-]*)\\s*\\n([\\s\\S]*?)```/i);
+        const codeBlock = data.reply.match(/```([a-z0-9+#.-]*)\s*\n([\s\S]*?)```/i);
         if (codeBlock) {
           $("#workspace-editor").value = codeBlock[2].trimEnd();
           const extensions = { javascript: "js", js: "js", typescript: "ts", ts: "ts", python: "py", py: "py", html: "html", css: "css", json: "json", sql: "sql", bash: "sh", sh: "sh" };
