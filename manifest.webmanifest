@@ -1,17 +1,17 @@
 {
   "id": "./",
-  "name": "AIKO — ta complice virtuelle",
+  "name": "AIKO — ton assistante IA",
   "short_name": "AIKO",
-  "description": "Une assistante IA au style kawaii.",
+  "description": "Une assistante IA kawaii avec des personnalités à choisir.",
   "lang": "fr-FR",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#222b55",
-  "theme_color": "#222b55",
+  "background_color": "#f8f6ff",
+  "theme_color": "#292448",
   "icons": [
-    { "src": "icons/aiko-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
-    { "src": "icons/aiko-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+    { "src": "./aiko-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "./aiko-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
   ]
 }
