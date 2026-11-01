@@ -100,7 +100,7 @@ function addMessage(content, role, createdAt = new Date().toISOString()) {
   const imageUrl = typeof content === "string" && content.startsWith("[[AIKO_IMAGE]]")
     ? content.slice(14)
     : null;
-  if (imageUrl && imageUrl.startsWith("https://media.pollinations.ai/")) {
+  if (imageUrl && /^https:\/\//i.test(imageUrl)) {
     const image = document.createElement("img");
     image.className = "generated-image";
     image.src = imageUrl;
