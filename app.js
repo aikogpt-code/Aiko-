@@ -97,7 +97,21 @@ function addMessage(content, role, createdAt = new Date().toISOString()) {
   }
   const bubble = document.createElement("div");
   bubble.className = "message-bubble";
-  bubble.textContent = content;
+  const imageMatch = typeof content === "string" ? content.match(/^\\[\\[AIKO_IMAGE\\]\\](https:\\/\\/[^\\s]+)$/) : null;
+  if (imageMatch) {
+    const image = document.createElement("img");
+    image.className = "generated-image";
+    image.src = imageMatch[1];
+    image.alt = "Image générée par AIKO";
+    image.loading = "lazy";
+    image.referrerPolicy = "no-referrer";
+    image.addEventListener("error", () => {
+      image.alt = "Cette image n'est plus disponible chez le fournisseur.";
+    }, { once: true });
+    bubble.appendChild(image);
+  } else {
+    bubble.textContent = content;
+  }
   const time = document.createElement("span");
   time.className = "message-time";
   time.textContent = formatTime(createdAt);
@@ -271,6 +285,10 @@ async function createConversation(firstMessage = "") {
   return data;
 }
 
+function isImageRequest(message) {
+  return /^(?:dessine(?:-moi)?|g[eé]n[eè]re(?:-moi)?(?:\\s+une\\s+image)?|cr[eé]e(?:-moi)?(?:\\s+une\\s+image)?|fais(?:-moi)?(?:\\s+une\\s+image)?|fabrique(?:-moi)?(?:\\s+une\\s+image)?|image\\s*:)/i.test(message.trim());
+}
+
 async function sendMessage(rawMessage) {
   const message = rawMessage.trim();
   if (!message || busy || !currentUser) return;
@@ -287,12 +305,11 @@ async function sendMessage(rawMessage) {
       if (updateError) throw updateError;
       currentConversation.persona_key = currentPersona;
     }
-    const { data, error } = await supabase.functions.invoke("aiko-chat", {
-      body: {
-        conversation_id: currentConversation.id,
-        message,
-        persona_key: currentPersona
-      }
+    const imageRequest = isImageRequest(message);
+    const { data, error } = await supabase.functions.invoke(imageRequest ? "aiko-image" : "aiko-chat", {
+      body: imageRequest
+        ? { conversation_id: currentConversation.id, prompt: message }
+        : { conversation_id: currentConversation.id, message, persona_key: currentPersona }
     });
     if (error) {
       let detail = data?.error;
@@ -306,8 +323,13 @@ async function sendMessage(rawMessage) {
       throw new Error(detail || "Le service IA est momentanément indisponible.");
     }
     if (data?.error) throw new Error(data.error);
-    if (!data?.reply) throw new Error("Aiko n'a pas reçu de réponse. Réessaie.");
-    addMessage(data.reply, "assistant");
+    if (imageRequest) {
+      if (!data?.content || !data?.image_url) throw new Error("Le générateur n'a pas renvoyé d'image.");
+      addMessage(data.content, "assistant");
+    } else {
+      if (!data?.reply) throw new Error("Aiko n'a pas reçu de réponse. Réessaie.");
+      addMessage(data.reply, "assistant");
+    }
     const current = conversations.find((item) => item.id === currentConversation.id);
     if (current && current.title === "Nouvelle discussion") {
       current.title = escapeTitle(message);
