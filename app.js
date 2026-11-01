@@ -60,16 +60,20 @@ function showApp() {
 function setAuthMode(mode) {
   authMode = mode;
   const signup = mode === "signup";
-  $("#auth-title").textContent = signup ? "Fais connaissance avec Aiko !" : "Bon retour, senpai !";
+  $("#auth-title").textContent = signup ? "Crée ton petit espace !" : "Bon retour, senpai !";
   $("#auth-description").textContent = signup
-    ? "Crée ton compte pour commencer ton petit univers."
-    : "Connecte-toi pour retrouver tes conversations et personnalités.";
-  $("#auth-submit").textContent = signup ? "Créer mon compte" : "Se connecter";
-  $("#auth-switch-copy").textContent = signup ? "Tu as déjà un compte ?" : "Pas encore de compte ?";
-  $("#auth-switch").textContent = signup ? "Se connecter" : "Créer un compte";
-  $("#auth-name-label").classList.toggle("hidden", !signup);
-  $("#auth-name").classList.toggle("hidden", !signup);
+    ? "Choisis un pseudo et un code secret pour commencer."
+    : "Entre ton pseudo et ton code secret pour retrouver tes discussions.";
+  $("#auth-submit").textContent = signup ? "Créer mon accès" : "Se connecter";
+  $("#auth-switch-copy").textContent = signup ? "Tu as déjà un accès ?" : "Nouveau ici ?";
+  $("#auth-switch").textContent = signup ? "Se connecter" : "Créer mon accès";
+  $("#auth-confirm-label").classList.toggle("hidden", !signup);
+  $("#auth-confirm").classList.toggle("hidden", !signup);
+  $("#auth-confirm").required = signup;
   $("#auth-password").autocomplete = signup ? "new-password" : "current-password";
+  $("#auth-name").value = "";
+  $("#auth-password").value = "";
+  $("#auth-confirm").value = "";
   setAuthMessage("");
 }
 
@@ -323,11 +327,11 @@ async function sendMessage(rawMessage) {
 async function startApp(user) {
   currentUser = user;
   showApp();
-  const displayName = user.user_metadata?.display_name || user.email?.split("@")[0] || "Mon compte";
+  const displayName = user.user_metadata?.display_name || user.user_metadata?.username || "Mon compte";
   $("#user-name").textContent = displayName;
-  $("#user-email").textContent = user.email || "";
+  $("#user-email").textContent = "Espace personnel";
   $("#user-avatar").textContent = displayName.charAt(0).toUpperCase();
-  $("#settings-account").textContent = user.email || "";
+  $("#settings-account").textContent = displayName;
   showWelcome();
   try {
     await Promise.all([loadCustomPersonas(), loadConversations()]);
@@ -340,32 +344,57 @@ async function startApp(user) {
 
 authForm.addEventListener("submit", async (event) => {
   event.preventDefault();
-  const email = $("#auth-email").value.trim();
-  const password = $("#auth-password").value;
-  const name = $("#auth-name").value.trim();
+  const username = $("#auth-name").value.trim();
+  const code = $("#auth-password").value;
+  const confirmation = $("#auth-confirm").value;
   const submit = $("#auth-submit");
+
+  if (!/^[A-Za-z0-9_-]{3,20}$/.test(username)) {
+    setAuthMessage("Le pseudo doit contenir 3 à 20 lettres, chiffres, _ ou -.", true);
+    return;
+  }
+  if (code.length < 8 || code.length > 64) {
+    setAuthMessage("Ton code secret doit contenir entre 8 et 64 caractères.", true);
+    return;
+  }
+  if (authMode === "signup" && code !== confirmation) {
+    setAuthMessage("Les deux codes ne correspondent pas.", true);
+    return;
+  }
+
   submit.disabled = true;
-  setAuthMessage(authMode === "signup" ? "Création de ton compte…" : "Connexion…");
+  setAuthMessage(authMode === "signup" ? "Création de ton espace…" : "Connexion…");
   try {
-    if (authMode === "signup") {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: { data: { display_name: name || email.split("@")[0] } }
-      });
-      if (error) throw error;
-      if (data.session && data.user) {
-        await startApp(data.user);
-      } else {
-        setAuthMessage("Un e-mail de confirmation vient de t'être envoyé. Confirme ton adresse, puis connecte-toi. 💌");
+    const { data, error } = await supabase.functions.invoke("aiko-access", {
+      body: {
+        action: authMode,
+        username,
+        code
       }
-    } else {
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) throw error;
-      await startApp(data.user);
+    });
+    if (error) {
+      let detail = data?.error;
+      try {
+        if (error.context && typeof error.context.clone === "function") {
+          const parsed = await error.context.clone().json();
+          detail = parsed.error || detail;
+        }
+      } catch { /* keep the generic message */ }
+      throw new Error(detail || "Impossible de te connecter. Réessaie.");
     }
+    if (data?.error) throw new Error(data.error);
+    if (!data?.session?.access_token || !data?.session?.refresh_token) {
+      throw new Error("La connexion n'a pas renvoyé de session valide.");
+    }
+    const { data: sessionData, error: sessionError } = await supabase.auth.setSession({
+      access_token: data.session.access_token,
+      refresh_token: data.session.refresh_token
+    });
+    if (sessionError) throw sessionError;
+    await startApp(sessionData.user);
+    authForm.reset();
   } catch (error) {
-    setAuthMessage(error.message || "Impossible de continuer. Réessaie.", true);
+    setAuthMessage(error.message || "Impossible de continuer. Vérifie ton pseudo et ton code.", true);
   } finally {
     submit.disabled = false;
   }

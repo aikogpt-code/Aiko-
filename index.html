@@ -20,19 +20,19 @@
       <div class="auth-brand"><img src="./aiko-192.png" alt="AIKO"><div><strong>AIKO</strong><span>un petit monde rien qu'à toi</span></div></div>
       <div class="auth-illustration">✦ ♡ ✧</div>
       <h1 id="auth-title">Bienvenue, senpai !</h1>
-      <p id="auth-description">Connecte-toi pour retrouver tes conversations et personnalités.</p>
+      <p id="auth-description">Entre ton pseudo et ton code secret pour retrouver ton espace.</p>
       <form id="auth-form" class="auth-form">
-        <label for="auth-email">Adresse e-mail</label>
-        <input id="auth-email" type="email" autocomplete="email" placeholder="toi@exemple.com" required>
-        <label for="auth-password">Mot de passe</label>
-        <input id="auth-password" type="password" autocomplete="current-password" minlength="6" placeholder="6 caractères minimum" required>
-        <label id="auth-name-label" for="auth-name" class="hidden">Ton pseudo</label>
-        <input id="auth-name" class="hidden" type="text" autocomplete="nickname" maxlength="40" placeholder="Comment Aiko doit t'appeler ?">
+        <label for="auth-name">Ton pseudo</label>
+        <input id="auth-name" type="text" autocomplete="username" minlength="3" maxlength="20" pattern="[A-Za-z0-9_-]{3,20}" placeholder="Ex. Senpai_01" required>
+        <label for="auth-password">Ton code secret</label>
+        <input id="auth-password" type="password" autocomplete="current-password" minlength="8" maxlength="64" placeholder="8 caractères minimum" required>
+        <label id="auth-confirm-label" for="auth-confirm" class="hidden">Confirme ton code</label>
+        <input id="auth-confirm" class="hidden" type="password" autocomplete="new-password" minlength="8" maxlength="64" placeholder="Retape ton code secret">
         <button id="auth-submit" class="primary-button" type="submit">Se connecter</button>
       </form>
-      <p class="auth-switch"><span id="auth-switch-copy">Pas encore de compte ?</span> <button id="auth-switch" type="button">Créer un compte</button></p>
+      <p class="auth-switch"><span id="auth-switch-copy">Pas encore de pseudo ?</span> <button id="auth-switch" type="button">Créer mon accès</button></p>
       <p id="auth-message" class="auth-message" role="status"></p>
-      <p class="auth-privacy">Tes conversations restent privées dans ton compte.</p>
+      <p class="auth-privacy">Aucune adresse e-mail demandée. Garde ton code secret précieusement : il n'existe pas de récupération par e-mail.</p>
     </div>
   </div>
 
