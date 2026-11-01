@@ -327,11 +327,11 @@ async function sendMessage(rawMessage) {
 async function startApp(user) {
   currentUser = user;
   showApp();
-  const displayName = user.user_metadata?.display_name || user.email?.split("@")[0] || "Mon compte";
+  const displayName = user.user_metadata?.display_name || user.user_metadata?.username || "Mon compte";
   $("#user-name").textContent = displayName;
-  $("#user-email").textContent = user.email || "";
+  $("#user-email").textContent = "Espace personnel";
   $("#user-avatar").textContent = displayName.charAt(0).toUpperCase();
-  $("#settings-account").textContent = user.email || "";
+  $("#settings-account").textContent = displayName;
   showWelcome();
   try {
     await Promise.all([loadCustomPersonas(), loadConversations()]);
