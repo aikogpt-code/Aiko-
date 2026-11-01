@@ -555,6 +555,21 @@ function saveGameSetup() {
 }
 $("#game-platform").addEventListener("change", saveGameSetup);
 $("#game-name").addEventListener("change", saveGameSetup);
+$("#game-platform").addEventListener("change", updateGamingProfileSummary);
+$("#game-name").addEventListener("input", updateGamingProfileSummary);
+function updateGamingProfileSummary() {
+  const game = $("#game-name").value.trim();
+  const platform = $("#game-platform").value;
+  $("#gaming-profile-summary").textContent = game ? platform + " · " + game : "Tous les jeux";
+}
+$("#toggle-gaming-profile").addEventListener("click", () => {
+  const panel = $("#gaming-toolbar");
+  const button = $("#toggle-gaming-profile");
+  const open = panel.classList.toggle("hidden");
+  button.setAttribute("aria-expanded", String(!open));
+});
+
+updateGamingProfileSummary();
 for (const id of ["image-style","image-format"]) {
   try { const opts=JSON.parse(localStorage.getItem("aiko-image-setup")||"{}"); if(opts[id==="image-style"?"style":"format"]) $("#"+id).value=opts[id==="image-style"?"style":"format"]; } catch {}
   $("#"+id).addEventListener("change",()=>{try{localStorage.setItem("aiko-image-setup",JSON.stringify({style:$("#image-style").value,format:$("#image-format").value}));}catch{}});
