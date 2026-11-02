@@ -38,7 +38,7 @@
 
   <div id="app" class="app hidden">
     <aside id="sidebar" class="sidebar">
-      <div class="side-brand"><img src="./aiko-avatar.jpg" alt=""><div><b>AIKO</b><small>GAMING AI COMPANION</small></div></div>
+      <div class="side-brand"><img src="./aiko-avatar.jpg" alt=""><div><b>AIKO</b><small>GAMING AI COMPANION</small></div><button id="sidebar-close" class="sidebar-close" type="button" aria-label="Fermer le menu">×</button></div>
       <button id="new-chat" class="new-chat-button"><span>＋</span> Nouvelle discussion</button>
       <div class="side-section-title">TON HISTORIQUE</div>
       <nav id="conversation-list" class="conversation-list" aria-label="Historique des discussions"></nav>
@@ -48,6 +48,7 @@
         <div class="user-card"><div class="user-avatar" id="user-avatar">♡</div><div class="user-details"><strong id="user-name">Mon compte</strong><small id="user-email"></small></div><button id="sign-out" class="sign-out" title="Se déconnecter" aria-label="Se déconnecter">↪</button></div>
       </div>
     </aside>
+    <button id="sidebar-backdrop" class="sidebar-backdrop" type="button" aria-label="Fermer le menu"></button>
 
     <main class="main-panel">
       <header class="topbar">
