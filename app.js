@@ -332,6 +332,17 @@ function isImageRequest(message) {
   return /(?:^|\b)(?:dessine(?:-moi)?|dessiner|dessin(?:e|er)?|g[eé]n[eè]re(?:-moi)?|g[eé]n[eè]rer|cr[eé]e(?:-moi)?|cr[eé]er|fais(?:-moi)? une image|fabrique(?:-moi)?|image *:|une image de|une illustration de|peux-tu (?:me )?(?:dessiner|g[eé]n[eè]rer|cr[eé]er)|je veux (?:une image|que tu dessines)|montre-moi en image)/i.test(message.trim());
 }
 
+function showAdultSearch(query) {
+  const row = document.createElement("article");
+  row.className = "message-row assistant";
+  const avatar = document.createElement("img"); avatar.className = "message-avatar"; avatar.src = "./aiko-avatar.jpg"; avatar.alt = "Aiko";
+  const bubble = document.createElement("div"); bubble.className = "message-bubble adult-search-result";
+  const heading = document.createElement("strong"); heading.textContent = "Recherche adulte";
+  const note = document.createElement("p"); note.textContent = "La recherche s’ouvre sur le site externe. Réservé aux adultes (18+). AIKO ne télécharge et n’héberge aucune vidéo. Respecte le consentement et la législation locale.";
+  const link = document.createElement("a"); link.href = "https://www.pornhub.com/video/search?search=" + encodeURIComponent(query); link.target = "_blank"; link.rel = "noopener noreferrer"; link.className = "adult-search-link"; link.textContent = "Voir les résultats sur Pornhub ↗";
+  bubble.append(heading, note, link); row.append(avatar, bubble); chatMessages.appendChild(row); chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
 async function sendMessage(rawMessage) {
   const message = rawMessage.trim();
   if (!message || busy || !currentUser) return;
@@ -340,6 +351,7 @@ async function sendMessage(rawMessage) {
   addMessage(message, "user");
   setBusy(true);
   try {
+    if (assistantMode === "adult") { showAdultSearch(message); return; }
     if (!currentConversation) await createConversation(message);
     const currentPersona = personaSelect.value || "coach";
     if (currentConversation.persona_key !== currentPersona) {
@@ -616,18 +628,29 @@ for (const id of ["image-style","image-format"]) {
 
 
 function setAssistantMode(mode) {
+  if (mode === "adult") {
+    let confirmed = false;
+    try { confirmed = localStorage.getItem("aiko-adult-confirmed") === "yes"; } catch {}
+    if (!confirmed) {
+      confirmed = window.confirm("Ce mode est réservé aux personnes de 18 ans ou plus et ouvre un site externe pour adultes. Confirmer avoir au moins 18 ans ?");
+      if (confirmed) { try { localStorage.setItem("aiko-adult-confirmed", "yes"); } catch {} }
+    }
+    if (!confirmed) mode = "chat";
+  }
   assistantMode = mode;
   $("#mode-chat").classList.toggle("active", mode === "chat");
   $("#mode-code").classList.toggle("active", mode === "code");
+  $("#mode-adult").classList.toggle("active", mode === "adult");
   $("#coding-workspace").classList.toggle("hidden", mode !== "code");
   $("#chat-messages").classList.remove("hidden");
-  promptInput.placeholder = mode === "code" ? "Décris le code ou le bug à résoudre…" : "Demande une strat, un build, une astuce…";
+  promptInput.placeholder = mode === "code" ? "Décris le code ou le bug à résoudre…" : mode === "adult" ? "Saisis ta recherche adulte…" : "Demande une strat, un build, une astuce…";
   $("#workspace-status").textContent = mode === "code"
     ? "Atelier local : édite ton fichier ici, puis enregistre ou exporte-le. L’accès direct à GitHub sera ajouté via une connexion sécurisée."
     : "Atelier de code prêt.";
 }
 $("#mode-chat").addEventListener("click", () => setAssistantMode("chat"));
 $("#mode-code").addEventListener("click", () => setAssistantMode("code"));
+$("#mode-adult").addEventListener("click", () => setAssistantMode("adult"));
 $("#workspace-open").addEventListener("click", () => {
   const filename = $("#workspace-filename").value.trim() || "code.txt";
   const saved = localStorage.getItem("aiko-workspace:" + filename);
