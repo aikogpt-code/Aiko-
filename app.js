@@ -633,10 +633,12 @@ $("#toggle-gaming-profile").addEventListener("click", () => {
 });
 
 updateGamingProfileSummary();
-for (const id of ["image-style","image-format"]) {
-  try { const opts=JSON.parse(localStorage.getItem("aiko-image-setup")||"{}"); if(opts[id==="image-style"?"style":"format"]) $("#"+id).value=opts[id==="image-style"?"style":"format"]; } catch {}
-  $("#"+id).addEventListener("change",()=>{try{localStorage.setItem("aiko-image-setup",JSON.stringify({style:$("#image-style").value,format:$("#image-format").value}));}catch{}});
-}
+$("#image-create-button").addEventListener("click", () => {
+  if (assistantMode === "adult") { setAssistantMode("chat"); }
+  promptInput.value = "Génère une image de ";
+  promptInput.focus();
+  promptInput.setSelectionRange(promptInput.value.length, promptInput.value.length);
+});
 
 
 function setAssistantMode(mode) {
