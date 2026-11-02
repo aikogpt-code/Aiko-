@@ -88,3 +88,5 @@ body{background:#050505!important}
 
 /* Masquer le titre de chaque discussion dans l'en-tête du chat. */
 .chat-heading{display:none!important}
+
+.adult-mode-button{color:#a34a69;border-color:rgba(163,74,105,.35)}.adult-mode-button.active{background:rgba(163,74,105,.12);border-color:#a34a69}.adult-search-result p{margin:8px 0 12px;line-height:1.5}.adult-search-link{display:inline-block;padding:9px 13px;border-radius:12px;background:#93405f;color:#fff;text-decoration:none;font-weight:800}
