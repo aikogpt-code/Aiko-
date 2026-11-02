@@ -12,9 +12,9 @@
   "theme_color": "#0b1020",
   "icons": [
     {
-      "src": "./aiko-avatar.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
+      "src": "./aiko-avatar.jpg",
+      "sizes": "256x256",
+      "type": "image/jpeg",
       "purpose": "any"
     }
   ]
