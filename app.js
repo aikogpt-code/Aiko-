@@ -654,6 +654,7 @@ function setAssistantMode(mode) {
   $("#mode-chat").classList.toggle("active", mode === "chat");
   $("#mode-code").classList.toggle("active", mode === "code");
   $("#mode-adult").classList.toggle("active", mode === "adult");
+  $("#mode-adult-main").classList.toggle("active", mode === "adult");
   $("#coding-workspace").classList.toggle("hidden", mode !== "code");
   $("#chat-messages").classList.remove("hidden");
   promptInput.placeholder = mode === "code" ? "Décris le code ou le bug à résoudre…" : mode === "adult" ? "Saisis ta recherche adulte…" : "Demande une strat, un build, une astuce…";
@@ -664,6 +665,7 @@ function setAssistantMode(mode) {
 $("#mode-chat").addEventListener("click", () => setAssistantMode("chat"));
 $("#mode-code").addEventListener("click", () => setAssistantMode("code"));
 $("#mode-adult").addEventListener("click", () => { setAssistantMode("adult"); closeSidebar(); });
+$("#mode-adult-main").addEventListener("click", () => setAssistantMode(assistantMode === "adult" ? "chat" : "adult"));
 $("#workspace-open").addEventListener("click", () => {
   const filename = $("#workspace-filename").value.trim() || "code.txt";
   const saved = localStorage.getItem("aiko-workspace:" + filename);
