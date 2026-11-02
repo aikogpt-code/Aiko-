@@ -1,4 +1,4 @@
-const CACHE_NAME = "aiko-shell-v22";
+const CACHE_NAME = "aiko-shell-v23";
 const APP_FILES = [
   "./",
   "./index.html",
