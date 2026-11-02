@@ -512,7 +512,7 @@ $("#new-chat").addEventListener("click", () => {
   currentConversation = null;
   renderConversationList();
   showWelcome();
-  $("#sidebar").classList.remove("open");
+  closeSidebar();
   promptInput.focus();
 });
 $("#persona-select").addEventListener("change", async () => {
@@ -544,7 +544,7 @@ promptInput.addEventListener("keydown", (event) => {
 $("#create-persona-open").addEventListener("click", () => {
   $("#persona-message").textContent = "";
   $("#persona-modal").classList.remove("hidden");
-  $("#sidebar").classList.remove("open");
+  closeSidebar();
 });
 $("#persona-form").addEventListener("submit", async (event) => {
   event.preventDefault();
@@ -594,7 +594,19 @@ document.querySelectorAll(".modal").forEach((modal) => {
     if (event.target === modal) modal.classList.add("hidden");
   });
 });
-$("#menu-toggle").addEventListener("click", () => $("#sidebar").classList.toggle("open"));
+function closeSidebar() {
+  $("#sidebar").classList.remove("open");
+  $("#sidebar-backdrop").classList.remove("visible");
+  $("#menu-toggle").setAttribute("aria-expanded", "false");
+}
+function toggleSidebar() {
+  const open = $("#sidebar").classList.toggle("open");
+  $("#sidebar-backdrop").classList.toggle("visible", open);
+  $("#menu-toggle").setAttribute("aria-expanded", String(open));
+}
+$("#menu-toggle").addEventListener("click", toggleSidebar);
+$("#sidebar-close").addEventListener("click", closeSidebar);
+$("#sidebar-backdrop").addEventListener("click", closeSidebar);
 
 try {
   const savedGameSetup = JSON.parse(localStorage.getItem("aiko-gaming-setup") || "{}");
