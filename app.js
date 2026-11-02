@@ -650,6 +650,7 @@ function setAssistantMode(mode) {
     if (!confirmed) mode = "chat";
   }
   assistantMode = mode;
+  try { localStorage.setItem("aiko-assistant-mode", mode); } catch {}
   $("#mode-chat").classList.toggle("active", mode === "chat");
   $("#mode-code").classList.toggle("active", mode === "code");
   $("#mode-adult").classList.toggle("active", mode === "adult");
@@ -662,7 +663,7 @@ function setAssistantMode(mode) {
 }
 $("#mode-chat").addEventListener("click", () => setAssistantMode("chat"));
 $("#mode-code").addEventListener("click", () => setAssistantMode("code"));
-$("#mode-adult").addEventListener("click", () => setAssistantMode("adult"));
+$("#mode-adult").addEventListener("click", () => { setAssistantMode("adult"); closeSidebar(); });
 $("#workspace-open").addEventListener("click", () => {
   const filename = $("#workspace-filename").value.trim() || "code.txt";
   const saved = localStorage.getItem("aiko-workspace:" + filename);
@@ -714,6 +715,10 @@ supabase.auth.onAuthStateChange((event, session) => {
 
 (async function init() {
   setAuthMode("login");
+  try {
+    const savedMode = localStorage.getItem("aiko-assistant-mode");
+    if (savedMode === "adult" || savedMode === "code" || savedMode === "chat") setAssistantMode(savedMode);
+  } catch {}
   const { data, error } = await supabase.auth.getSession();
   if (error) console.warn("Session Supabase:", error.message);
   if (data?.session?.user) await startApp(data.session.user);
