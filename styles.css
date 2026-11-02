@@ -103,3 +103,6 @@ body{background:#050505!important}
   .sidebar-backdrop{display:block;position:fixed;inset:0;z-index:14;border:0;padding:0;background:rgba(20,16,32,.38);opacity:0;pointer-events:none;transition:opacity .22s}
   .sidebar-backdrop.visible{opacity:1;pointer-events:auto}
 }
+
+.adult-mode-button{color:#a34a69;border-color:rgba(163,74,105,.35)}
+.adult-mode-button.active{background:rgba(163,74,105,.2);border-color:#a34a69;box-shadow:0 0 var(--aiko-glow) rgba(163,74,105,.35)}
