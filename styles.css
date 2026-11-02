@@ -106,3 +106,5 @@ body{background:#050505!important}
 
 .adult-mode-button{color:#a34a69;border-color:rgba(163,74,105,.35)}
 .adult-mode-button.active{background:rgba(163,74,105,.2);border-color:#a34a69;box-shadow:0 0 var(--aiko-glow) rgba(163,74,105,.35)}
+
+.image-create-button{width:39px;height:39px;flex:0 0 39px;border:1px solid #51466f!important;border-radius:13px;background:#17132a!important;color:#d8c9ff;font-size:18px;box-shadow:0 0 14px #8c67ff22;cursor:pointer}.image-create-button:hover{background:#292044!important;border-color:#9a7cff!important}
