@@ -15,22 +15,12 @@ const chatMessages = $("#chat-messages");
 const promptInput = $("#prompt");
 const sendButton = $("#send-button");
 const typingIndicator = $("#typing-indicator");
-const personaSelect = $("#persona-select");
-
-const builtInPersonas = [
-  { key: "coach", name: "Coach gamer", emoji: "🎮" },
-  { key: "douce", name: "Douce", emoji: "🌸" },
-  { key: "tsundere", name: "Tsundere", emoji: "🔥" },
-  { key: "enjouee", name: "Enjouée", emoji: "🎉" },
-  { key: "sage", name: "Sage", emoji: "🌙" },
-  { key: "directe", name: "Directe", emoji: "⚡" },
-  { key: "creative", name: "Créative", emoji: "🎨" }
-];
 
 let currentUser = null;
 let currentConversation = null;
 let conversations = [];
 let customPersonas = [];
+let activePersonaKey = "aiko";
 let authMode = "login";
 let busy = false;
 let toastTimer;
@@ -170,33 +160,8 @@ function setBusy(value) {
 }
 
 function updatePersonaHeading() {
-  const selected = personaSelect.selectedOptions[0]?.textContent || "Douce";
-  $("#topbar-persona").textContent = `Aiko · ${selected.replace(/^\S+\s/, "")}`;
-}
-
-function renderPersonaOptions() {
-  const selected = personaSelect.value || "coach";
-  personaSelect.replaceChildren();
-  builtInPersonas.forEach((persona) => {
-    const option = document.createElement("option");
-    option.value = persona.key;
-    option.textContent = `${persona.emoji} ${persona.name}`;
-    personaSelect.appendChild(option);
-  });
-  if (customPersonas.length) {
-    const group = document.createElement("optgroup");
-    group.label = "Mes personnalités";
-    customPersonas.forEach((persona) => {
-      const option = document.createElement("option");
-      option.value = `custom:${persona.id}`;
-      option.textContent = `💫 ${persona.name}`;
-      group.appendChild(option);
-    });
-    personaSelect.appendChild(group);
-  }
-  const valid = [...personaSelect.options].some((option) => option.value === selected);
-  personaSelect.value = valid ? selected : "coach";
-  updatePersonaHeading();
+  const selected = customPersonas.find((persona) => `custom:${persona.id}` === activePersonaKey);
+  $("#topbar-persona").textContent = selected ? `AIKO · ${selected.name}` : "AIKO";
 }
 
 async function loadCustomPersonas() {
@@ -206,7 +171,12 @@ async function loadCustomPersonas() {
     .order("created_at", { ascending: false });
   if (error) throw error;
   customPersonas = data || [];
-  renderPersonaOptions();
+  let savedPersona = null;
+  try { savedPersona = localStorage.getItem(`aiko-active-persona:${currentUser.id}`); } catch {}
+  activePersonaKey = savedPersona && customPersonas.some((persona) => `custom:${persona.id}` === savedPersona)
+    ? savedPersona
+    : "aiko";
+  updatePersonaHeading();
 }
 
 async function loadConversations() {
@@ -286,7 +256,10 @@ async function deleteConversation(conversation) {
 
 async function openConversation(conversation) {
   currentConversation = conversation;
-  personaSelect.value = conversation.persona_key || "coach";
+  activePersonaKey = typeof conversation.persona_key === "string" && conversation.persona_key.startsWith("custom:")
+    ? conversation.persona_key
+    : "aiko";
+  try { localStorage.setItem(`aiko-active-persona:${currentUser.id}`, activePersonaKey); } catch {}
   updatePersonaHeading();
   renderConversationList();
   $("#chat-title").textContent = conversation.title || "Discussion";
@@ -313,7 +286,7 @@ async function openConversation(conversation) {
 }
 
 async function createConversation(firstMessage = "") {
-  const personaKey = personaSelect.value || "coach";
+  const personaKey = activePersonaKey;
   const title = escapeTitle(firstMessage) || "Nouvelle discussion";
   const { data, error } = await supabase.from("conversations")
     .insert({ user_id: currentUser.id, title, persona_key: personaKey })
@@ -341,7 +314,7 @@ async function sendMessage(rawMessage) {
   setBusy(true);
   try {
     if (!currentConversation) await createConversation(message);
-    const currentPersona = personaSelect.value || "coach";
+    const currentPersona = activePersonaKey;
     if (currentConversation.persona_key !== currentPersona) {
       const { error: updateError } = await supabase.from("conversations")
         .update({ persona_key: currentPersona }).eq("id", currentConversation.id).eq("user_id", currentUser.id);
@@ -503,17 +476,6 @@ $("#new-chat").addEventListener("click", () => {
   closeSidebar();
   promptInput.focus();
 });
-$("#persona-select").addEventListener("change", async () => {
-  updatePersonaHeading();
-  if (currentConversation) {
-    const personaKey = personaSelect.value;
-    const { error } = await supabase.from("conversations").update({ persona_key: personaKey })
-      .eq("id", currentConversation.id).eq("user_id", currentUser.id);
-    if (error) toast("Impossible de changer cette personnalité.");
-    else currentConversation.persona_key = personaKey;
-  }
-});
-
 $("#composer").addEventListener("submit", (event) => {
   event.preventDefault();
   sendMessage(promptInput.value);
@@ -550,13 +512,15 @@ $("#persona-form").addEventListener("submit", async (event) => {
       .insert(payload).select("id,name,description,system_prompt,voice_id,created_at").single();
     if (error) throw error;
     customPersonas.unshift(data);
-    renderPersonaOptions();
-    personaSelect.value = `custom:${data.id}`;
+    activePersonaKey = `custom:${data.id}`;
+    try { localStorage.setItem(`aiko-active-persona:${currentUser.id}`, activePersonaKey); } catch {}
     updatePersonaHeading();
     if (currentConversation) {
-      await supabase.from("conversations").update({ persona_key: personaSelect.value })
+      const { error: conversationUpdateError } = await supabase.from("conversations")
+        .update({ persona_key: activePersonaKey })
         .eq("id", currentConversation.id).eq("user_id", currentUser.id);
-      currentConversation.persona_key = personaSelect.value;
+      if (conversationUpdateError) throw conversationUpdateError;
+      currentConversation.persona_key = activePersonaKey;
     }
     event.currentTarget.reset();
     $("#persona-modal").classList.add("hidden");
