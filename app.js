@@ -21,6 +21,7 @@ let currentConversation = null;
 let conversations = [];
 let customPersonas = [];
 let activePersonaKey = "aiko";
+let preferredPersonaKey = "aiko";
 let authMode = "login";
 let busy = false;
 let toastTimer;
@@ -173,9 +174,10 @@ async function loadCustomPersonas() {
   customPersonas = data || [];
   let savedPersona = null;
   try { savedPersona = localStorage.getItem(`aiko-active-persona:${currentUser.id}`); } catch {}
-  activePersonaKey = savedPersona && customPersonas.some((persona) => `custom:${persona.id}` === savedPersona)
+  preferredPersonaKey = savedPersona && customPersonas.some((persona) => `custom:${persona.id}` === savedPersona)
     ? savedPersona
     : "aiko";
+  activePersonaKey = preferredPersonaKey;
   updatePersonaHeading();
 }
 
@@ -259,7 +261,6 @@ async function openConversation(conversation) {
   activePersonaKey = typeof conversation.persona_key === "string" && conversation.persona_key.startsWith("custom:")
     ? conversation.persona_key
     : "aiko";
-  try { localStorage.setItem(`aiko-active-persona:${currentUser.id}`, activePersonaKey); } catch {}
   updatePersonaHeading();
   renderConversationList();
   $("#chat-title").textContent = conversation.title || "Discussion";
@@ -471,6 +472,8 @@ $("#settings-signout").addEventListener("click", () => {
 
 $("#new-chat").addEventListener("click", () => {
   currentConversation = null;
+  activePersonaKey = preferredPersonaKey;
+  updatePersonaHeading();
   renderConversationList();
   showWelcome();
   closeSidebar();
@@ -513,7 +516,8 @@ $("#persona-form").addEventListener("submit", async (event) => {
     if (error) throw error;
     customPersonas.unshift(data);
     activePersonaKey = `custom:${data.id}`;
-    try { localStorage.setItem(`aiko-active-persona:${currentUser.id}`, activePersonaKey); } catch {}
+    preferredPersonaKey = activePersonaKey;
+    try { localStorage.setItem(`aiko-active-persona:${currentUser.id}`, preferredPersonaKey); } catch {}
     updatePersonaHeading();
     if (currentConversation) {
       const { error: conversationUpdateError } = await supabase.from("conversations")
