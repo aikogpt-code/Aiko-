@@ -335,12 +335,42 @@ function isImageRequest(message) {
 function showAdultSearch(query) {
   const row = document.createElement("article");
   row.className = "message-row assistant";
-  const avatar = document.createElement("img"); avatar.className = "message-avatar"; avatar.src = "./aiko-avatar.jpg"; avatar.alt = "Aiko";
-  const bubble = document.createElement("div"); bubble.className = "message-bubble adult-search-result";
-  const heading = document.createElement("strong"); heading.textContent = "Recherche adulte";
-  const note = document.createElement("p"); note.textContent = "La recherche s’ouvre sur le site externe. Réservé aux adultes (18+). AIKO ne télécharge et n’héberge aucune vidéo. Respecte le consentement et la législation locale.";
-  const link = document.createElement("a"); link.href = "https://www.pornhub.com/video/search?search=" + encodeURIComponent(query); link.target = "_blank"; link.rel = "noopener noreferrer"; link.className = "adult-search-link"; link.textContent = "Voir les résultats sur Pornhub ↗";
-  bubble.append(heading, note, link); row.append(avatar, bubble); chatMessages.appendChild(row); chatMessages.scrollTop = chatMessages.scrollHeight;
+  const avatar = document.createElement("img");
+  avatar.className = "message-avatar";
+  avatar.src = "./aiko-avatar.jpg";
+  avatar.alt = "Aiko";
+  const bubble = document.createElement("div");
+  bubble.className = "message-bubble adult-search-result";
+  const heading = document.createElement("strong");
+  heading.textContent = "Recherche multi-plateformes";
+  const note = document.createElement("p");
+  note.textContent = "Résultats recherchés directement sur les plateformes ci-dessous. Accès réservé aux adultes (18+). AIKO n’héberge ni ne télécharge ces contenus. Vérifie le consentement, les règles du site et la législation locale.";
+  const term = document.createElement("p");
+  term.className = "adult-search-term";
+  term.textContent = "Recherche : " + query;
+  const platforms = [
+    { name: "Pornhub", url: "https://www.pornhub.com/video/search?search=" + encodeURIComponent(query) },
+    { name: "XVideos", url: "https://www.xvideos.com/?k=" + encodeURIComponent(query) },
+    { name: "XNXX", url: "https://www.xnxx.com/search/" + encodeURIComponent(query) },
+    { name: "RedTube", url: "https://www.redtube.com/?search=" + encodeURIComponent(query) },
+    { name: "YouPorn", url: "https://www.youporn.com/search/?query=" + encodeURIComponent(query) },
+    { name: "Eporner", url: "https://www.eporner.com/search/" + encodeURIComponent(query) }
+  ];
+  const list = document.createElement("div");
+  list.className = "adult-platform-list";
+  platforms.forEach((platform) => {
+    const link = document.createElement("a");
+    link.href = platform.url;
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    link.className = "adult-search-link";
+    link.textContent = "Chercher sur " + platform.name + " ↗";
+    list.appendChild(link);
+  });
+  bubble.append(heading, note, term, list);
+  row.append(avatar, bubble);
+  chatMessages.appendChild(row);
+  chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
 async function sendMessage(rawMessage) {
