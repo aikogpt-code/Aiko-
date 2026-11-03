@@ -102,6 +102,9 @@ function addMessage(content, role, createdAt = new Date().toISOString()) {
   const imageUrl = typeof content === "string" && content.startsWith("[[AIKO_IMAGE]]")
     ? content.slice(14)
     : null;
+  const videoUrl = typeof content === "string" && content.startsWith("[[AIKO_VIDEO]]")
+    ? content.slice(14)
+    : null;
   if (imageUrl && /^https:\/\//i.test(imageUrl)) {
     const image = document.createElement("img");
     image.className = "generated-image";
@@ -113,6 +116,20 @@ function addMessage(content, role, createdAt = new Date().toISOString()) {
       image.alt = "Cette image n'est plus disponible chez le fournisseur.";
     }, { once: true });
     bubble.appendChild(image);
+  } else if (videoUrl && isDirectVideoUrl(videoUrl)) {
+    const player = document.createElement("video");
+    player.className = "inline-video-player";
+    player.src = videoUrl;
+    player.controls = true;
+    player.playsInline = true;
+    player.preload = "metadata";
+    player.referrerPolicy = "no-referrer";
+    player.setAttribute("aria-label", "Lecteur vidéo");
+    const fallback = document.createElement("p");
+    fallback.className = "video-fallback";
+    fallback.textContent = "La lecture est bloquée par l’hébergeur ou ce format n’est pas pris en charge.";
+    player.appendChild(fallback);
+    bubble.appendChild(player);
   } else {
     bubble.textContent = content;
   }
@@ -332,7 +349,23 @@ function isImageRequest(message) {
   return /(?:^|\b)(?:dessine(?:-moi)?|dessiner|dessin(?:e|er)?|g[eé]n[eè]re(?:-moi)?|g[eé]n[eè]rer|cr[eé]e(?:-moi)?|cr[eé]er|fais(?:-moi)? une image|fabrique(?:-moi)?|image *:|une image de|une illustration de|peux-tu (?:me )?(?:dessiner|g[eé]n[eè]rer|cr[eé]er)|je veux (?:une image|que tu dessines)|montre-moi en image)/i.test(message.trim());
 }
 
+function isDirectVideoUrl(value) {
+  try {
+    const url = new URL(value);
+    return url.protocol === "https:" &&
+      !url.username && !url.password &&
+      /\\.(?:mp4|webm|ogv|ogg)$/i.test(url.pathname);
+  } catch {
+    return false;
+  }
+}
+
 function showAdultSearch(query) {
+  const directUrl = query.match(/https:\/\/[^\\s<>]+/i)?.[0]?.replace(/[),.]+$/, "");
+  if (directUrl && isDirectVideoUrl(directUrl)) {
+    addMessage("[[AIKO_VIDEO]]" + directUrl, "assistant");
+    return;
+  }
   const row = document.createElement("article");
   row.className = "message-row assistant";
   const avatar = document.createElement("img");
@@ -344,7 +377,31 @@ function showAdultSearch(query) {
   const heading = document.createElement("strong");
   heading.textContent = "Recherche multi-plateformes";
   const note = document.createElement("p");
-  note.textContent = "Résultats recherchés directement sur les plateformes ci-dessous. Accès réservé aux adultes (18+). AIKO n’héberge ni ne télécharge ces contenus. Vérifie le consentement, les règles du site et la législation locale.";
+  note.textContent = "Recherche sur les plateformes ci-dessous. Pour lire une vidéo directement ici, colle une URL HTTPS directe vers un fichier MP4, WebM ou OGG. Les pages de recherche et les liens de vidéo protégés ne peuvent pas être intégrés automatiquement.";
+  const directHelp = document.createElement("p");
+  directHelp.className = "adult-video-help";
+  directHelp.textContent = "Lecture intégrée : accepte les liens directs autorisés uniquement. AIKO ne contourne pas les protections et ne télécharge pas les vidéos des sites.";
+  const directForm = document.createElement("form");
+  directForm.className = "adult-video-form";
+  const directInput = document.createElement("input");
+  directInput.type = "url";
+  directInput.placeholder = "https://exemple.com/video.mp4";
+  directInput.autocomplete = "url";
+  directInput.required = true;
+  directInput.setAttribute("aria-label", "URL directe de la vidéo");
+  const directButton = document.createElement("button");
+  directButton.type = "submit";
+  directButton.textContent = "Lire dans le chat ▶";
+  directForm.append(directInput, directButton);
+  directForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const url = directInput.value.trim();
+    if (!isDirectVideoUrl(url)) {
+      toast("Colle un lien HTTPS direct vers un fichier MP4, WebM ou OGG.");
+      return;
+    }
+    addMessage("[[AIKO_VIDEO]]" + url, "assistant");
+  });
   const term = document.createElement("p");
   term.className = "adult-search-term";
   term.textContent = "Recherche : " + query;
@@ -367,7 +424,7 @@ function showAdultSearch(query) {
     link.textContent = "Chercher sur " + platform.name + " ↗";
     list.appendChild(link);
   });
-  bubble.append(heading, note, term, list);
+  bubble.append(heading, note, directHelp, directForm, term, list);
   row.append(avatar, bubble);
   chatMessages.appendChild(row);
   chatMessages.scrollTop = chatMessages.scrollHeight;
