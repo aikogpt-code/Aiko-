@@ -115,3 +115,14 @@ body{background:#050505!important}
 .adult-platform-list .adult-search-link{font-size:11px;padding:9px 11px;background:#211a35;border:1px solid #6e4c9c;color:#eee4ff}
 .adult-platform-list .adult-search-link:hover{background:#38234f;border-color:#b27cff}
 .adult-search-result>p{overflow-wrap:anywhere}
+
+
+/* Lecteur vidéo intégré au chat AIKO */
+.message-bubble:has(.inline-video-player){width:min(100%,560px);padding:9px}
+.inline-video-player{display:block;width:100%;max-height:70vh;aspect-ratio:16/9;background:#000;border:1px solid color-mix(in srgb,var(--aiko-accent) 55%,#333);border-radius:12px}
+.video-fallback{color:#aaa;font-size:11px}
+.adult-video-help{font-size:11px;color:#aaa}
+.adult-video-form{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 14px}
+.adult-video-form input{flex:1 1 220px;min-width:0;background:#080808;color:#fff;border:1px solid #51466f;border-radius:10px;padding:10px;font:12px Nunito,sans-serif}
+.adult-video-form button{border:1px solid #8d4770;border-radius:10px;background:#382039;color:#fff;padding:9px 12px;font:800 11px Nunito,sans-serif;cursor:pointer}
+.adult-video-form button:hover{background:#593052}
