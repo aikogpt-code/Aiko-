@@ -91,7 +91,6 @@ body{background:#050505!important}
 
 
 
-/* Le mode adulte reste discret dans le menu latéral. */
 
 /* Fermeture claire du menu latéral sur mobile. */
 .sidebar-close{display:none;margin-left:auto;width:30px;height:30px;border:1px solid var(--line);border-radius:9px;background:#fff;color:#8175a1;font-size:22px;line-height:1}
