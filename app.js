@@ -697,8 +697,7 @@ supabase.auth.onAuthStateChange((event, session) => {
   setAuthMode("login");
   try {
     const savedMode = localStorage.getItem("aiko-assistant-mode");
-    if (savedMode === "code" || savedMode === "chat") setAssistantMode(savedMode);
-    else if (savedMode === "adult") setAssistantMode("chat");
+    setAssistantMode(savedMode === "code" ? "code" : "chat");
     localStorage.removeItem("aiko-adult-confirmed");
   } catch {}
   const { data, error } = await supabase.auth.getSession();
