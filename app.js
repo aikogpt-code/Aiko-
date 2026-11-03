@@ -105,6 +105,9 @@ function addMessage(content, role, createdAt = new Date().toISOString()) {
   const videoUrl = typeof content === "string" && content.startsWith("[[AIKO_VIDEO]]")
     ? content.slice(14)
     : null;
+  const embedUrl = typeof content === "string" && content.startsWith("[[AIKO_EMBED]]")
+    ? content.slice(14)
+    : null;
   if (imageUrl && /^https:\/\//i.test(imageUrl)) {
     const image = document.createElement("img");
     image.className = "generated-image";
@@ -129,6 +132,17 @@ function addMessage(content, role, createdAt = new Date().toISOString()) {
     fallback.className = "video-fallback";
     fallback.textContent = "La lecture est bloquée par l’hébergeur ou ce format n’est pas pris en charge.";
     player.appendChild(fallback);
+    bubble.appendChild(player);
+  } else if (embedUrl && isOfficialAdultEmbedUrl(embedUrl)) {
+    const player = document.createElement("iframe");
+    player.className = "inline-video-player adult-embed-player";
+    player.src = embedUrl;
+    player.title = "Vidéo intégrée";
+    player.loading = "lazy";
+    player.referrerPolicy = "strict-origin-when-cross-origin";
+    player.allow = "autoplay; fullscreen; picture-in-picture";
+    player.allowFullscreen = true;
+    player.setAttribute("sandbox", "allow-scripts allow-same-origin allow-presentation");
     bubble.appendChild(player);
   } else {
     bubble.textContent = content;
@@ -360,8 +374,39 @@ function isDirectVideoUrl(value) {
   }
 }
 
+function getOfficialAdultEmbed(value) {
+  try {
+    const url = new URL(value);
+    if (url.protocol !== "https:" || url.username || url.password) return null;
+    const host = url.hostname.toLowerCase().replace(/^www\./, "");
+    if (host === "pornhub.com") {
+      const match = url.pathname.match(/^\/view_video\.php$/i) ? url.searchParams.get("viewkey") : url.pathname.match(/^\/embed\/([a-z0-9]+)\/?$/i)?.[1];
+      return match && /^[a-z0-9]+$/i.test(match) ? "https://www.pornhub.com/embed/" + match : null;
+    }
+    if (host === "xvideos.com") {
+      const match = url.pathname.match(/^\/video\.([a-z0-9]+)\/?$/i)?.[1] || url.pathname.match(/^\/embedframe\/([a-z0-9]+)\/?$/i)?.[1];
+      return match && /^[a-z0-9]+$/i.test(match) ? "https://www.xvideos.com/embedframe/" + match : null;
+    }
+    return null;
+  } catch { return null; }
+}
+
+function isOfficialAdultEmbedUrl(value) {
+  try {
+    const url = new URL(value);
+    return url.protocol === "https:" &&
+      ((url.hostname === "www.pornhub.com" && /^\/embed\/[a-z0-9]+$/i.test(url.pathname)) ||
+       (url.hostname === "www.xvideos.com" && /^\/embedframe\/[a-z0-9]+$/i.test(url.pathname)));
+  } catch { return false; }
+}
+
 function showAdultSearch(query) {
   const directUrl = query.match(/https:\/\/[^\s<>]+/i)?.[0]?.replace(/[),.]+$/, "");
+  const officialEmbed = directUrl && getOfficialAdultEmbed(directUrl);
+  if (officialEmbed) {
+    addMessage("[[AIKO_EMBED]]" + officialEmbed, "assistant");
+    return;
+  }
   if (directUrl && isDirectVideoUrl(directUrl)) {
     addMessage("[[AIKO_VIDEO]]" + directUrl, "assistant");
     return;
@@ -377,15 +422,15 @@ function showAdultSearch(query) {
   const heading = document.createElement("strong");
   heading.textContent = "Recherche multi-plateformes";
   const note = document.createElement("p");
-  note.textContent = "Recherche sur les plateformes ci-dessous. Pour lire une vidéo directement ici, colle une URL HTTPS directe vers un fichier MP4, WebM ou OGG. Les pages de recherche et les liens de vidéo protégés ne peuvent pas être intégrés automatiquement.";
+  note.textContent = "AIKO peut intégrer ici les pages vidéo publiques de Pornhub et XVideos lorsque leur lecteur officiel est disponible. Colle simplement le lien de la page vidéo dans le champ ci-dessous.";
   const directHelp = document.createElement("p");
   directHelp.className = "adult-video-help";
-  directHelp.textContent = "Lecture intégrée : accepte les liens directs autorisés uniquement. AIKO ne contourne pas les protections et ne télécharge pas les vidéos des sites.";
+  directHelp.textContent = "Colle un lien de vidéo Pornhub ou XVideos, ou un lien direct MP4/WebM. Les recherches générales restent accessibles via les boutons ci-dessous. Certaines vidéos peuvent bloquer l’intégration selon les réglages du site.";
   const directForm = document.createElement("form");
   directForm.className = "adult-video-form";
   const directInput = document.createElement("input");
   directInput.type = "url";
-  directInput.placeholder = "https://exemple.com/video.mp4";
+  directInput.placeholder = "Lien vidéo Pornhub / XVideos / MP4";
   directInput.autocomplete = "url";
   directInput.required = true;
   directInput.setAttribute("aria-label", "URL directe de la vidéo");
@@ -396,8 +441,13 @@ function showAdultSearch(query) {
   directForm.addEventListener("submit", (event) => {
     event.preventDefault();
     const url = directInput.value.trim();
+    const embed = getOfficialAdultEmbed(url);
+    if (embed) {
+      addMessage("[[AIKO_EMBED]]" + embed, "assistant");
+      return;
+    }
     if (!isDirectVideoUrl(url)) {
-      toast("Colle un lien HTTPS direct vers un fichier MP4, WebM ou OGG.");
+      toast("Lien non pris en charge : utilise une page vidéo Pornhub/XVideos ou un fichier MP4/WebM direct.");
       return;
     }
     addMessage("[[AIKO_VIDEO]]" + url, "assistant");
