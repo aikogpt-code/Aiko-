@@ -126,3 +126,8 @@ body{background:#050505!important}
 .adult-video-form input{flex:1 1 220px;min-width:0;background:#080808;color:#fff;border:1px solid #51466f;border-radius:10px;padding:10px;font:12px Nunito,sans-serif}
 .adult-video-form button{border:1px solid #8d4770;border-radius:10px;background:#382039;color:#fff;padding:9px 12px;font:800 11px Nunito,sans-serif;cursor:pointer}
 .adult-video-form button:hover{background:#593052}
+
+
+/* Lecteur officiel intégré Pornhub / XVideos */
+.adult-embed-player{border:1px solid #8d4770;background:#000}
+.message-bubble:has(.adult-embed-player){width:min(100%,640px);padding:9px}
