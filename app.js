@@ -102,12 +102,6 @@ function addMessage(content, role, createdAt = new Date().toISOString()) {
   const imageUrl = typeof content === "string" && content.startsWith("[[AIKO_IMAGE]]")
     ? content.slice(14)
     : null;
-  const videoUrl = typeof content === "string" && content.startsWith("[[AIKO_VIDEO]]")
-    ? content.slice(14)
-    : null;
-  const embedUrl = typeof content === "string" && content.startsWith("[[AIKO_EMBED]]")
-    ? content.slice(14)
-    : null;
   if (imageUrl && /^https:\/\//i.test(imageUrl)) {
     const image = document.createElement("img");
     image.className = "generated-image";
@@ -119,31 +113,6 @@ function addMessage(content, role, createdAt = new Date().toISOString()) {
       image.alt = "Cette image n'est plus disponible chez le fournisseur.";
     }, { once: true });
     bubble.appendChild(image);
-  } else if (videoUrl && isDirectVideoUrl(videoUrl)) {
-    const player = document.createElement("video");
-    player.className = "inline-video-player";
-    player.src = videoUrl;
-    player.controls = true;
-    player.playsInline = true;
-    player.preload = "metadata";
-    player.referrerPolicy = "no-referrer";
-    player.setAttribute("aria-label", "Lecteur vidéo");
-    const fallback = document.createElement("p");
-    fallback.className = "video-fallback";
-    fallback.textContent = "La lecture est bloquée par l’hébergeur ou ce format n’est pas pris en charge.";
-    player.appendChild(fallback);
-    bubble.appendChild(player);
-  } else if (embedUrl && isOfficialAdultEmbedUrl(embedUrl)) {
-    const player = document.createElement("iframe");
-    player.className = "inline-video-player adult-embed-player";
-    player.src = embedUrl;
-    player.title = "Vidéo intégrée";
-    player.loading = "lazy";
-    player.referrerPolicy = "strict-origin-when-cross-origin";
-    player.allow = "autoplay; fullscreen; picture-in-picture";
-    player.allowFullscreen = true;
-    player.setAttribute("sandbox", "allow-scripts allow-same-origin allow-presentation");
-    bubble.appendChild(player);
   } else {
     bubble.textContent = content;
   }
@@ -363,123 +332,6 @@ function isImageRequest(message) {
   return /(?:^|\b)(?:dessine(?:-moi)?|dessiner|dessin(?:e|er)?|g[eé]n[eè]re(?:-moi)?|g[eé]n[eè]rer|cr[eé]e(?:-moi)?|cr[eé]er|fais(?:-moi)? une image|fabrique(?:-moi)?|image *:|une image de|une illustration de|peux-tu (?:me )?(?:dessiner|g[eé]n[eè]rer|cr[eé]er)|je veux (?:une image|que tu dessines)|montre-moi en image)/i.test(message.trim());
 }
 
-function isDirectVideoUrl(value) {
-  try {
-    const url = new URL(value);
-    return url.protocol === "https:" &&
-      !url.username && !url.password &&
-      /\.(?:mp4|webm|ogv|ogg)$/i.test(url.pathname);
-  } catch {
-    return false;
-  }
-}
-
-function getOfficialAdultEmbed(value) {
-  try {
-    const url = new URL(value);
-    if (url.protocol !== "https:" || url.username || url.password) return null;
-    const host = url.hostname.toLowerCase().replace(/^www\./, "");
-    if (host === "pornhub.com") {
-      const match = url.pathname.match(/^\/view_video\.php$/i) ? url.searchParams.get("viewkey") : url.pathname.match(/^\/embed\/([a-z0-9]+)\/?$/i)?.[1];
-      return match && /^[a-z0-9]+$/i.test(match) ? "https://www.pornhub.com/embed/" + match : null;
-    }
-    if (host === "xvideos.com") {
-      const match = url.pathname.match(/^\/video\.([a-z0-9]+)\/?$/i)?.[1] || url.pathname.match(/^\/embedframe\/([a-z0-9]+)\/?$/i)?.[1];
-      return match && /^[a-z0-9]+$/i.test(match) ? "https://www.xvideos.com/embedframe/" + match : null;
-    }
-    return null;
-  } catch { return null; }
-}
-
-function isOfficialAdultEmbedUrl(value) {
-  try {
-    const url = new URL(value);
-    return url.protocol === "https:" &&
-      ((url.hostname === "www.pornhub.com" && /^\/embed\/[a-z0-9]+$/i.test(url.pathname)) ||
-       (url.hostname === "www.xvideos.com" && /^\/embedframe\/[a-z0-9]+$/i.test(url.pathname)));
-  } catch { return false; }
-}
-
-function showAdultSearch(query) {
-  const directUrl = query.match(/https:\/\/[^\s<>]+/i)?.[0]?.replace(/[),.]+$/, "");
-  const officialEmbed = directUrl && getOfficialAdultEmbed(directUrl);
-  if (officialEmbed) {
-    addMessage("[[AIKO_EMBED]]" + officialEmbed, "assistant");
-    return;
-  }
-  if (directUrl && isDirectVideoUrl(directUrl)) {
-    addMessage("[[AIKO_VIDEO]]" + directUrl, "assistant");
-    return;
-  }
-  const row = document.createElement("article");
-  row.className = "message-row assistant";
-  const avatar = document.createElement("img");
-  avatar.className = "message-avatar";
-  avatar.src = "./aiko-avatar.jpg";
-  avatar.alt = "Aiko";
-  const bubble = document.createElement("div");
-  bubble.className = "message-bubble adult-search-result";
-  const heading = document.createElement("strong");
-  heading.textContent = "Recherche multi-plateformes";
-  const note = document.createElement("p");
-  note.textContent = "AIKO peut intégrer ici les pages vidéo publiques de Pornhub et XVideos lorsque leur lecteur officiel est disponible. Colle simplement le lien de la page vidéo dans le champ ci-dessous.";
-  const directHelp = document.createElement("p");
-  directHelp.className = "adult-video-help";
-  directHelp.textContent = "Colle un lien de vidéo Pornhub ou XVideos, ou un lien direct MP4/WebM. Les recherches générales restent accessibles via les boutons ci-dessous. Certaines vidéos peuvent bloquer l’intégration selon les réglages du site.";
-  const directForm = document.createElement("form");
-  directForm.className = "adult-video-form";
-  const directInput = document.createElement("input");
-  directInput.type = "url";
-  directInput.placeholder = "Lien vidéo Pornhub / XVideos / MP4";
-  directInput.autocomplete = "url";
-  directInput.required = true;
-  directInput.setAttribute("aria-label", "URL directe de la vidéo");
-  const directButton = document.createElement("button");
-  directButton.type = "submit";
-  directButton.textContent = "Lire dans le chat ▶";
-  directForm.append(directInput, directButton);
-  directForm.addEventListener("submit", (event) => {
-    event.preventDefault();
-    const url = directInput.value.trim();
-    const embed = getOfficialAdultEmbed(url);
-    if (embed) {
-      addMessage("[[AIKO_EMBED]]" + embed, "assistant");
-      return;
-    }
-    if (!isDirectVideoUrl(url)) {
-      toast("Lien non pris en charge : utilise une page vidéo Pornhub/XVideos ou un fichier MP4/WebM direct.");
-      return;
-    }
-    addMessage("[[AIKO_VIDEO]]" + url, "assistant");
-  });
-  const term = document.createElement("p");
-  term.className = "adult-search-term";
-  term.textContent = "Recherche : " + query;
-  const platforms = [
-    { name: "Pornhub", url: "https://www.pornhub.com/video/search?search=" + encodeURIComponent(query) },
-    { name: "XVideos", url: "https://www.xvideos.com/?k=" + encodeURIComponent(query) },
-    { name: "XNXX", url: "https://www.xnxx.com/search/" + encodeURIComponent(query) },
-    { name: "RedTube", url: "https://www.redtube.com/?search=" + encodeURIComponent(query) },
-    { name: "YouPorn", url: "https://www.youporn.com/search/?query=" + encodeURIComponent(query) },
-    { name: "Eporner", url: "https://www.eporner.com/search/" + encodeURIComponent(query) }
-  ];
-  const list = document.createElement("div");
-  list.className = "adult-platform-list";
-  platforms.forEach((platform) => {
-    const link = document.createElement("a");
-    link.href = platform.url;
-    link.target = "_blank";
-    link.rel = "noopener noreferrer";
-    link.className = "adult-search-link";
-    link.textContent = "Chercher sur " + platform.name + " ↗";
-    list.appendChild(link);
-  });
-  bubble.append(heading, note, directHelp, directForm, term, list);
-  row.append(avatar, bubble);
-  chatMessages.appendChild(row);
-  chatMessages.scrollTop = chatMessages.scrollHeight;
-}
-
 async function sendMessage(rawMessage) {
   const message = rawMessage.trim();
   if (!message || busy || !currentUser) return;
@@ -488,7 +340,6 @@ async function sendMessage(rawMessage) {
   addMessage(message, "user");
   setBusy(true);
   try {
-    if (assistantMode === "adult") { showAdultSearch(message); return; }
     if (!currentConversation) await createConversation(message);
     const currentPersona = personaSelect.value || "coach";
     if (currentConversation.persona_key !== currentPersona) {
@@ -771,7 +622,6 @@ $("#toggle-gaming-profile").addEventListener("click", () => {
 
 updateGamingProfileSummary();
 $("#image-create-button").addEventListener("click", () => {
-  if (assistantMode === "adult") { setAssistantMode("chat"); }
   promptInput.value = "Génère une image de ";
   promptInput.focus();
   promptInput.setSelectionRange(promptInput.value.length, promptInput.value.length);
@@ -779,32 +629,21 @@ $("#image-create-button").addEventListener("click", () => {
 
 
 function setAssistantMode(mode) {
-  if (mode === "adult") {
-    let confirmed = false;
-    try { confirmed = localStorage.getItem("aiko-adult-confirmed") === "yes"; } catch {}
-    if (!confirmed) {
-      confirmed = window.confirm("Ce mode est réservé aux personnes de 18 ans ou plus et ouvre un site externe pour adultes. Confirmer avoir au moins 18 ans ?");
-      if (confirmed) { try { localStorage.setItem("aiko-adult-confirmed", "yes"); } catch {} }
-    }
-    if (!confirmed) mode = "chat";
-  }
-  assistantMode = mode;
-  try { localStorage.setItem("aiko-assistant-mode", mode); } catch {}
-  $("#mode-chat").classList.toggle("active", mode === "chat");
-  $("#mode-code").classList.toggle("active", mode === "code");
-  $("#mode-adult").classList.toggle("active", mode === "adult");
-  $("#mode-adult-main").classList.toggle("active", mode === "adult");
-  $("#coding-workspace").classList.toggle("hidden", mode !== "code");
+  assistantMode = mode === "code" ? "code" : "chat";
+  try { localStorage.setItem("aiko-assistant-mode", assistantMode); } catch {}
+  $("#mode-chat").classList.toggle("active", assistantMode === "chat");
+  $("#mode-code").classList.toggle("active", assistantMode === "code");
+  $("#coding-workspace").classList.toggle("hidden", assistantMode !== "code");
   $("#chat-messages").classList.remove("hidden");
-  promptInput.placeholder = mode === "code" ? "Décris le code ou le bug à résoudre…" : mode === "adult" ? "Saisis ta recherche adulte…" : "Demande une strat, un build, une astuce…";
-  $("#workspace-status").textContent = mode === "code"
+  promptInput.placeholder = assistantMode === "code"
+    ? "Décris le code ou le bug à résoudre…"
+    : "Demande une strat, un build, une astuce…";
+  $("#workspace-status").textContent = assistantMode === "code"
     ? "Atelier local : édite ton fichier ici, puis enregistre ou exporte-le. L’accès direct à GitHub sera ajouté via une connexion sécurisée."
     : "Atelier de code prêt.";
 }
 $("#mode-chat").addEventListener("click", () => setAssistantMode("chat"));
 $("#mode-code").addEventListener("click", () => setAssistantMode("code"));
-$("#mode-adult").addEventListener("click", () => { setAssistantMode("adult"); closeSidebar(); });
-$("#mode-adult-main").addEventListener("click", () => setAssistantMode(assistantMode === "adult" ? "chat" : "adult"));
 $("#workspace-open").addEventListener("click", () => {
   const filename = $("#workspace-filename").value.trim() || "code.txt";
   const saved = localStorage.getItem("aiko-workspace:" + filename);
@@ -858,7 +697,9 @@ supabase.auth.onAuthStateChange((event, session) => {
   setAuthMode("login");
   try {
     const savedMode = localStorage.getItem("aiko-assistant-mode");
-    if (savedMode === "adult" || savedMode === "code" || savedMode === "chat") setAssistantMode(savedMode);
+    if (savedMode === "code" || savedMode === "chat") setAssistantMode(savedMode);
+    else if (savedMode === "adult") setAssistantMode("chat");
+    localStorage.removeItem("aiko-adult-confirmed");
   } catch {}
   const { data, error } = await supabase.auth.getSession();
   if (error) console.warn("Session Supabase:", error.message);
