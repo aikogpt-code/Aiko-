@@ -354,14 +354,14 @@ function isDirectVideoUrl(value) {
     const url = new URL(value);
     return url.protocol === "https:" &&
       !url.username && !url.password &&
-      /\\.(?:mp4|webm|ogv|ogg)$/i.test(url.pathname);
+      /\.(?:mp4|webm|ogv|ogg)$/i.test(url.pathname);
   } catch {
     return false;
   }
 }
 
 function showAdultSearch(query) {
-  const directUrl = query.match(/https:\/\/[^\\s<>]+/i)?.[0]?.replace(/[),.]+$/, "");
+  const directUrl = query.match(/https:\/\/[^\s<>]+/i)?.[0]?.replace(/[),.]+$/, "");
   if (directUrl && isDirectVideoUrl(directUrl)) {
     addMessage("[[AIKO_VIDEO]]" + directUrl, "assistant");
     return;
